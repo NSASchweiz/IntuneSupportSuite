@@ -26,6 +26,7 @@ Die Suite kann je nach Ausbaustand unter anderem folgende Bereiche unterstützen
 - Unterstützung bei Company-Portal-Problemen
 - Sammlung technischer Diagnosedaten
 - Standardisierte Ausgabe für Supportfälle
+- Der Fallback ist komplett experimental in der App. Ich habe die Entwicklung des Fallbacks unterbrochen.
 
 ## Typische Einsatzfälle
 
