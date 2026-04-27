@@ -21,8 +21,8 @@
   ],
   "ImeServiceName": "IntuneManagementExtension",
   "AllowedSources": [
-    "sv000051",
-    "CPC-pasca-C394O"
+    "Device0",
+    "Device1"
   ],
   "AllowedDestinations": [],
   "ToolsDirectoryPath": "ProgramDir\\Tools",
