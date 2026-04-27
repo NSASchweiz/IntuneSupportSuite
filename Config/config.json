@@ -1,0 +1,141 @@
+{
+  "ConfigVersion": "1.1.1-Test-hotfix6",
+  "WindowTitle": "Intune Support Suite",
+  "AppDataFolderName": "Intune Support Suite",
+  "LocalLogDirectory": "%APPDATA%\\Intune Support Suite\\Logs",
+  "PsExecTimeoutSeconds": 10,
+  "ConnectionStatusIntervalSeconds": 5,
+  "ConnectionTimeoutSeconds": 30,
+  "LiveViewRefreshSeconds": 5,
+  "autoRefreshTargetLogs": 5,
+  "FallbackTaskDelayMinutes": 15,
+  "LocalProcessingDirectory": "%APPDATA%\\Intune Support Suite\\ProcessedLogs",
+  "DefaultLogFiles": [
+    "IntuneManagementExtension.log",
+    "AgentExecutor.log",
+    "AppActionProcessor.log",
+    "AppWorkload.log",
+    "ClientCertCheck.log",
+    "ClientHealth.log",
+    "DeviceHealthMonitoring.log",
+    "HealthScripts.log",
+    "NotificationInfraLogs.log",
+    "Sensor.log",
+    "Win32AppInventory.log"
+  ],
+  "WarningKeywords": [
+    "warning",
+    "warn",
+    "retry",
+    "timeout",
+    "pending",
+    "waiting",
+    "restart required",
+    "reboot required",
+    "pending restart",
+    "retrying"
+  ],
+  "ErrorKeywords": [
+    "error",
+    "failed",
+    "failure",
+    "nicht erfolgreich",
+    "exception",
+    "fatal",
+    "unable",
+    "cannot",
+    "denied",
+    "aborted",
+    "rollback",
+    "stack trace"
+  ],
+  "SuccessKeywords": [
+    "success",
+    "successful",
+    "valid",
+    "ok",
+    "completed successfully",
+    "completed",
+    "installed",
+    "detected",
+    "healthy",
+    "compliant",
+    "resolved",
+    "finished",
+    "succeeded"
+  ],
+  "LiveConnectionStatusMessage": "Live View aktiv.",
+  "OptionsShowDefaultLogFiles": false,
+  "simulationMode": false,
+  "LogTabs": {
+    "CompanyPortal": {
+      "IsVisible": true
+    },
+    "Enrollment": {
+      "IsVisible": true
+    },
+    "MdmDiagnostics": {
+      "IsVisible": true
+    },
+    "EventLogChannels": {
+      "IsVisible": true
+    },
+    "InstallAgentEvents": {
+      "IsVisible": true
+    },
+    "AgentExecutor": {
+      "IsVisible": true
+    },
+    "AppActionProcessor": {
+      "IsVisible": true
+    },
+    "AppWorkload": {
+      "IsVisible": true
+    },
+    "ClientCertCheck": {
+      "IsVisible": true
+    },
+    "ClientHealth": {
+      "IsVisible": true
+    },
+    "DeviceHealthMonitoring": {
+      "IsVisible": true
+    },
+    "HealthScripts": {
+      "IsVisible": true
+    },
+    "IntuneManagementExtension": {
+      "IsVisible": true
+    },
+    "NotificationInfraLogs": {
+      "IsVisible": true
+    },
+    "Sensor": {
+      "IsVisible": true
+    },
+    "Win321AppInventory": {
+      "IsVisible": true
+    },
+    "LocalAppLog": {
+      "IsVisible": true
+    },
+    "AppDataLogs": {
+      "IsVisible": true
+    },
+    "RemoteAuditLog": {
+      "IsVisible": true
+    },
+    "FallbackLog": {
+      "IsVisible": true
+    },
+    "TrustLog": {
+      "IsVisible": true
+    }
+  },
+  "ShortDestinationLogs": true,
+  "EnableAppLogRotation": true,
+  "MaxManagedLogSizeMb": 5,
+  "MaxManagedLogHistoryFiles": 10,
+  "MaxKeptLocalLogs": 10,
+  "Language": "Language-DEV"
+}

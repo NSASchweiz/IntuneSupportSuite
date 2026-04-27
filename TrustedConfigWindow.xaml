@@ -1,0 +1,276 @@
+<Window x:Class="DapIntuneSupportSuite.TrustedConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Trusted Config"
+        Height="860" Width="980"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource WindowBackgroundBrush}">
+    <Window.Resources>
+        <Style x:Key="ReadOnlyInfoTextBlockStyle" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="Padding" Value="8,6" />
+            <Setter Property="Background" Value="#F4F7FA" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="TrustedEditorTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Margin" Value="0,0,0,10" />
+            <Setter Property="Padding" Value="8,6" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="Height" Value="34" />
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsTrustedSectionReadOnly, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                    <Setter Property="IsReadOnly" Value="True" />
+                    <Setter Property="Background" Value="#E6E6E6" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="TrustedEditorCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Margin" Value="0,8,0,8" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.IsTrustedSectionReadOnly, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="SubSectionHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <Border Background="White" CornerRadius="8" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="TrustedConfig" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,8" />
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0"
+                                    Content="reset Signing state"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    VerticalContentAlignment="Center"
+                                    Padding="12,6"
+                                    Height="34"
+                                    MinWidth="150"
+                                    Margin="0,0,8,0"
+                                    Click="ResetTrust_Click" />
+                            <Button Grid.Column="1"
+                                    Content="re-validate Trust"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    VerticalContentAlignment="Center"
+                                    Padding="12,6"
+                                    Height="34"
+                                    MinWidth="150"
+                                    Click="RevalidateTrust_Click" />
+                        </Grid>
+
+                        <TextBlock Text="Trust- und Validierungsstatus" Style="{StaticResource SubSectionHeaderStyle}" />
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <TextBlock Text="ConfigVersion" FontWeight="SemiBold" /><TextBlock Text="{Binding ConfigVersion}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="TrustedConfigPath" FontWeight="SemiBold" /><TextBlock Text="{Binding TrustedConfigPath}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="TrustLogPath" FontWeight="SemiBold" /><TextBlock Text="{Binding TrustLogPath}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="Trust State" FontWeight="SemiBold" />
+                                <Border Background="#F4F7FA" Margin="0,0,0,8">
+                                    <Grid Height="32">
+                                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding TrustStatusLoadProgress}" Foreground="#4CAF50" Background="Transparent" Visibility="{Binding IsTrustStatusLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        <TextBlock Text="{Binding TrustStateText}" VerticalAlignment="Center" Margin="8,0" />
+                                    </Grid>
+                                </Border>
+                                <TextBlock Text="LastSignatureValidation" FontWeight="SemiBold" /><TextBlock Text="{Binding LastSignatureValidation}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="LastTrustedSignerThumbprint" FontWeight="SemiBold" /><TextBlock Text="{Binding LastTrustedSignerThumbprint}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="LastSchemaValidation" FontWeight="SemiBold" /><TextBlock Text="{Binding LastSchemaValidation}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="LastConsistencyValidation" FontWeight="SemiBold" /><TextBlock Text="{Binding LastConsistencyValidation}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="ValidationSummary" FontWeight="SemiBold" /><TextBlock Text="{Binding ValidationSummary}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="ValidationErrorCount" FontWeight="SemiBold" /><TextBlock Text="{Binding ValidationErrorCount}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="ValidationWarningCount" FontWeight="SemiBold" /><TextBlock Text="{Binding ValidationWarningCount}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="ValidationInfoCount" FontWeight="SemiBold" /><TextBlock Text="{Binding ValidationInfoCount}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Separator Margin="0,0,0,12" />
+                        <TextBlock Text="Remote- und Tool-Pfade" Style="{StaticResource SubSectionHeaderStyle}" />
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0" Margin="0,0,16,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="TrustedConfigPath" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="1" Text="{Binding TrustedConfigPath}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                                <TextBlock Grid.Row="2" Text="TrustLogPath" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="3" Text="{Binding TrustLogPath}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                                <TextBlock Grid.Row="4" Text="RemoteAuditLogDirectory" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="5" Text="{Binding RemoteAuditLogDirectory}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                                <TextBlock Grid.Row="6" Text="SupportClientDirectory" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="7" Text="{Binding SupportClientDirectory}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                            </Grid>
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="PowerShellExecutable" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="1" Text="{Binding PowerShellExecutable}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                                <TextBlock Grid.Row="2" Text="ToolsDirectoryPath" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="3" Text="{Binding ToolsDirectoryPath}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                                <TextBlock Grid.Row="4" Text="PsExecPath" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="5" Text="{Binding PsExecPath}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                                <TextBlock Grid.Row="6" Text="PsExecCatalogFilePath" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="7" Text="{Binding PsExecCatalogFilePath}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                            </Grid>
+                        </Grid>
+
+                        <Separator Margin="0,0,0,12" />
+                        <TextBlock Text="PsExec Integrität und Version" Style="{StaticResource SubSectionHeaderStyle}" />
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <CheckBox Content="EnablePsExecCatalogValidation" IsChecked="{Binding EnablePsExecCatalogValidation}" Style="{StaticResource TrustedEditorCheckBoxStyle}" />
+                                <TextBlock Text="PsExecExpectedSigner" FontWeight="SemiBold" /><TextBox Text="{Binding PsExecExpectedSigner}" Style="{StaticResource TrustedEditorTextBoxStyle}" />
+                                <TextBlock Text="PsExecExpectedThumbprint" FontWeight="SemiBold" /><TextBox Text="{Binding PsExecExpectedThumbprint}" Style="{StaticResource TrustedEditorTextBoxStyle}" />
+                                <TextBlock Text="PsExecExpectedPublicKey" FontWeight="SemiBold" /><TextBox Text="{Binding PsExecExpectedPublicKey}" Style="{StaticResource TrustedEditorTextBoxStyle}" />
+                                <TextBlock Text="PsExecDownloadSource" FontWeight="SemiBold" /><TextBox Text="{Binding PsExecDownloadSource}" Style="{StaticResource TrustedEditorTextBoxStyle}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="LatestPublishedPsExecVersion" FontWeight="SemiBold" /><TextBlock Text="{Binding LatestPublishedPsExecVersion}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="LocalPsExecVersion" FontWeight="SemiBold" /><TextBlock Text="{Binding LocalPsExecVersion}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="PsExecVersionStatus" FontWeight="SemiBold" /><TextBlock Text="{Binding PsExecVersionStatus}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="LastPsExecVersionCheck" FontWeight="SemiBold" /><TextBlock Text="{Binding LastPsExecVersionCheck}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="LastDownloadSource" FontWeight="SemiBold" /><TextBlock Text="{Binding LastDownloadSource}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                                <TextBlock Text="LastDownloadValidationResult" FontWeight="SemiBold" /><TextBlock Text="{Binding LastDownloadValidationResult}" Style="{StaticResource ReadOnlyInfoTextBlockStyle}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Separator Margin="0,0,0,12" />
+                        <TextBlock Text="Fallback / Restore" Style="{StaticResource SubSectionHeaderStyle}" />
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0" Margin="0,0,16,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="ImeServiceName" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="1" Text="{Binding ImeServiceName}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                                <TextBlock Grid.Row="2" Text="RemoteFallbackLogFileName" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="3" Text="{Binding RemoteFallbackLogFileName}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                            </Grid>
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="FallbackConfigFileName" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="1" Text="{Binding FallbackConfigFileName}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                                <TextBlock Grid.Row="2" Text="FallbackScriptFileName" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="3" Text="{Binding FallbackScriptFileName}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                                <TextBlock Grid.Row="4" Text="FallbackScheduledTaskName" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="5" Text="{Binding FallbackScheduledTaskName}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                                <TextBlock Grid.Row="6" Text="FallbackRunOnceValueName" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="7" Text="{Binding FallbackRunOnceValueName}" Style="{StaticResource TrustedEditorTextBoxStyle}" Width="Auto" HorizontalAlignment="Stretch" />
+                                <CheckBox Grid.Row="8" Content="ConnectionFallback" IsChecked="{Binding ConnectionFallback}" Style="{StaticResource TrustedEditorCheckBoxStyle}" />
+                                <CheckBox Grid.Row="9" Content="RestoreRemotingState" IsChecked="{Binding RestoreRemotingState}" Style="{StaticResource TrustedEditorCheckBoxStyle}" />
+                            </Grid>
+                        </Grid>
+
+                        <Separator Margin="0,0,0,12" />
+                        <TextBlock Text="Reset- und Allow-Listen" Style="{StaticResource SubSectionHeaderStyle}" />
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0" Margin="0,0,16,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="RegistryPathsForAppReset (eine Zeile pro Eintrag)" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="1" Text="{Binding RegistryPathsForAppReset}" Style="{StaticResource TrustedEditorTextBoxStyle}" AcceptsReturn="True" Height="120" Width="Auto" VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" HorizontalAlignment="Stretch" />
+                            </Grid>
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="AllowedSources / Quellsysteme" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="1" Text="{Binding AllowedSources}" ToolTip="Eine Zeile pro Eintrag: Host/FQDN, IPv4 oder CIDR; leer = alles erlaubt" Style="{StaticResource TrustedEditorTextBoxStyle}" AcceptsReturn="True" Height="120" Width="Auto" VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" HorizontalAlignment="Stretch" />
+                                <TextBlock Grid.Row="2" Text="AllowedDestinations / Zielsysteme" FontWeight="SemiBold" />
+                                <TextBox Grid.Row="3" Text="{Binding AllowedDestinations}" ToolTip="Eine Zeile pro Eintrag: Host/FQDN, IPv4 oder CIDR; leer = alles erlaubt" Style="{StaticResource TrustedEditorTextBoxStyle}" AcceptsReturn="True" Height="120" Width="Auto" VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" HorizontalAlignment="Stretch" />
+                            </Grid>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="1" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="120" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Speichern" Height="34" Padding="12,0" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsDefault="True" Click="Save_Click" IsEnabled="{Binding CanSaveTrustedConfig}" />
+            <Button Grid.Column="2" Content="Abbrechen" Height="34" Padding="12,0" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsCancel="True" Click="Cancel_Click" />
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,178 @@
+<Window x:Class="DapIntuneSupportSuite.OptionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Optionen"
+        Height="860" Width="980"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource WindowBackgroundBrush}">
+    <Window.Resources>
+        <Style x:Key="CompactValueTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="Height" Value="34" />
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Padding" Value="8,6" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+        <Style x:Key="PathTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="Height" Value="34" />
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Padding" Value="8,6" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+        <Style x:Key="SubSectionHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+    </Window.Resources>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <Border Background="White" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="Benutzereinstellungen" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" />
+
+                        <TextBlock Text="Betriebsmodus" Style="{StaticResource SubSectionHeaderStyle}" />
+                        <CheckBox Content="simulationMode" IsChecked="{Binding SimulationMode}" Margin="0,0,0,12" IsEnabled="{Binding CanEditSimulationMode}" />
+                        <Separator Margin="0,0,0,12" />
+
+                        <TextBlock Text="Verbindungseinstellungen" Style="{StaticResource SubSectionHeaderStyle}" />
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <TextBlock Text="PsExecTimeoutSeconds" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding PsExecTimeoutSeconds}" Style="{StaticResource CompactValueTextBoxStyle}" />
+                                <TextBlock Text="ConnectionStatusIntervalSeconds" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding ConnectionStatusIntervalSeconds}" Style="{StaticResource CompactValueTextBoxStyle}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                                <TextBlock Text="ConnectionTimeoutSeconds" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding ConnectionTimeoutSeconds}" Style="{StaticResource CompactValueTextBoxStyle}" />
+                                <TextBlock Text="FallbackTaskDelayMinutes" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding FallbackTaskDelayMinutes}" Style="{StaticResource CompactValueTextBoxStyle}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="LiveViewRefreshSeconds" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding LiveViewRefreshSeconds}" Style="{StaticResource CompactValueTextBoxStyle}" />
+                            </StackPanel>
+                        </Grid>
+                        <Separator Margin="0,0,0,12" />
+
+                        <TextBlock Text="Log Einstellungen" Style="{StaticResource SubSectionHeaderStyle}" />
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                                <TextBlock Text="AppDataFolderName" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding AppDataFolderName, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource PathTextBoxStyle}" />
+                                <TextBlock Text="LocalLogDirectory" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding LocalLogDirectory, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource PathTextBoxStyle}" />
+                                <TextBlock Text="LocalProcessingDirectory" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding LocalProcessingDirectory, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource PathTextBoxStyle}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                                <TextBlock Text="autoRefreshTargetLogs (Sekunden)" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding AutoRefreshTargetLogs}" Style="{StaticResource CompactValueTextBoxStyle}" />
+                                <TextBlock Text="MaxManagedLogSizeMb" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding MaxManagedLogSizeMb}" Style="{StaticResource CompactValueTextBoxStyle}" />
+                                <TextBlock Text="maxkeptlocalLogs" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding MaxKeptLocalLogs, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource CompactValueTextBoxStyle}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="MaxManagedLogHistoryFiles" FontWeight="SemiBold" />
+                                <TextBox Text="{Binding MaxManagedLogHistoryFiles}" Style="{StaticResource CompactValueTextBoxStyle}" />
+                                <CheckBox Content="shortDestinationLogs" IsChecked="{Binding ShortDestinationLogs}" Margin="0,16,0,12" VerticalAlignment="Top" />
+                                <CheckBox Content="EnableAppLogRotation" IsChecked="{Binding EnableAppLogRotation}" Margin="0,0,0,8" VerticalAlignment="Top" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="White" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="Sichtbare Log-Reiter" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <TextBlock Text="Lokale Logs" Style="{StaticResource SubSectionHeaderStyle}" />
+                        <UniformGrid Columns="3" Margin="0,0,0,12">
+                            <CheckBox Content="DAP Intune Support" IsChecked="{Binding LocalAppLogVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="Trust Log" IsChecked="{Binding TrustLogVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="Log Verlauf" IsChecked="{Binding AppDataLogsVisible}" Margin="0,0,0,8" />
+                        </UniformGrid>
+
+                        <TextBlock Text="Company Portal / Enrollment / Diagnose" Style="{StaticResource SubSectionHeaderStyle}" />
+                        <UniformGrid Columns="3" Margin="0,0,0,12">
+                            <CheckBox Content="Company Portal Logs" IsChecked="{Binding CompanyPortalVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="Enrollment" IsChecked="{Binding EnrollmentVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="MDM Diagnoseartefakte" IsChecked="{Binding MdmDiagnosticsVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="Event-Log-Kanäle" IsChecked="{Binding EventLogChannelsVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="Install-Agent Events" IsChecked="{Binding InstallAgentEventsVisible}" Margin="0,0,0,8" />
+                        </UniformGrid>
+
+                        <TextBlock Text="Intune Logs" Style="{StaticResource SubSectionHeaderStyle}" />
+                        <UniformGrid Columns="3" Margin="0,0,0,12">
+                            <CheckBox Content="DAP Remote Audit Log" IsChecked="{Binding RemoteAuditLogVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="DAP Fallback Log" IsChecked="{Binding FallbackLogVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="AgentExecutor.log" IsChecked="{Binding AgentExecutorVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="AppActionProcessor.log" IsChecked="{Binding AppActionProcessorVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="AppWorkload.log" IsChecked="{Binding AppWorkloadVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="ClientCertCheck.log" IsChecked="{Binding ClientCertCheckVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="ClientHealth.log" IsChecked="{Binding ClientHealthVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="IntuneManagementExtension.log" IsChecked="{Binding IntuneManagementExtensionVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="NotificationInfraLogs.log" IsChecked="{Binding NotificationInfraLogsVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="Sensor.log" IsChecked="{Binding SensorVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="Win32AppInventory.log" IsChecked="{Binding Win321AppInventoryVisible}" Margin="0,0,0,8" />
+                        </UniformGrid>
+
+                        <TextBlock Text="Remediation Logs" Style="{StaticResource SubSectionHeaderStyle}" />
+                        <UniformGrid Columns="3" Margin="0,0,0,12">
+                            <CheckBox Content="HealthScripts.log" IsChecked="{Binding HealthScriptsVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="DeviceHealthMonitoring.log" IsChecked="{Binding DeviceHealthMonitoringVisible}" Margin="0,0,0,8" />
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+
+                <Border Background="White" CornerRadius="8" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Analyse Begriffe" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <CheckBox Content="DefaultLogFiles anzeigen" IsChecked="{Binding ShowDefaultLogFiles}" Margin="0,0,0,12" />
+                        <StackPanel Visibility="{Binding ShowDefaultLogFiles, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <TextBlock Text="DefaultLogFiles (eine Zeile pro Eintrag)" FontWeight="SemiBold" />
+                            <TextBox Text="{Binding DefaultLogFiles}" AcceptsReturn="True" Height="110" VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" Margin="0,0,0,8" />
+                        </StackPanel>
+                        <TextBlock Text="WarningKeywords (eine Zeile pro Eintrag)" FontWeight="SemiBold" />
+                        <TextBox Text="{Binding WarningKeywords}" AcceptsReturn="True" Height="80" VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" Margin="0,0,0,8" />
+                        <TextBlock Text="ErrorKeywords (eine Zeile pro Eintrag)" FontWeight="SemiBold" />
+                        <TextBox Text="{Binding ErrorKeywords}" AcceptsReturn="True" Height="80" VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" Margin="0,0,0,8" />
+                        <TextBlock Text="SuccessKeywords (eine Zeile pro Eintrag)" FontWeight="SemiBold" />
+                        <TextBox Text="{Binding SuccessKeywords}" AcceptsReturn="True" Height="80" VerticalScrollBarVisibility="Auto" TextWrapping="NoWrap" Margin="0,0,0,8" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="1" HorizontalAlignment="Right" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="120" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Speichern" Height="34" Padding="12,0" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsDefault="True" Click="Save_Click" />
+            <Button Grid.Column="2" Content="Abbrechen" Height="34" Padding="12,0" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsCancel="True" Click="Cancel_Click" />
+        </Grid>
+    </Grid>
+</Window>

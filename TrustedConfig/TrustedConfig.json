@@ -1,0 +1,41 @@
+{
+  "ConfigVersion": "1.1.0-hotfix9",
+  "TrustedConfigPath": "ProgramDir\\TrustedConfig\\TrustedConfig.json",
+  "TrustLogPath": "ProgramDir\\AppLog\\Trust.log",
+  "RemoteAuditLogDirectory": "C:\\ProgramData\\ktzh\\logs\\DAP Intune Support Suite",
+  "RemoteImeLogDirectory": "C:\\ProgramData\\Microsoft\\IntuneManagementExtension\\Logs",
+  "RemoteTempDirectory": "C:\\ProgramData\\DAPIntuneSupportSuite\\Temp",
+  "SupportClientDirectory": "C:\\ProgramData\\DAP Intune Support Client",
+  "PowerShellExecutable": "powershell.exe",
+  "PsExecPath": "",
+  "FallbackConfigFileName": "fallbackconfig.json",
+  "FallbackScriptFileName": "fallbackcore.ps1",
+  "FallbackScheduledTaskName": "DAPIntuneSupportFallback",
+  "FallbackRunOnceValueName": "DAPIntuneSupportFallback",
+  "RemoteFallbackLogFileName": "DAP-Fallback.log",
+  "ConnectionFallback": false,
+  "RestoreRemotingState": false,
+  "RegistryPathsForAppReset": [
+    "HKLM:\\SOFTWARE\\Microsoft\\IntuneManagementExtension\\Win32Apps",
+    "HKLM:\\SOFTWARE\\Microsoft\\EnterpriseDesktopAppManagement"
+  ],
+  "ImeServiceName": "IntuneManagementExtension",
+  "AllowedSources": [
+                     "sv000051",
+                     "CPC-pasca-C394O"
+                    ],
+  "AllowedDestinations": [],
+  "ToolsDirectoryPath": "ProgramDir\\Tools",
+  "PsExecCatalogFilePath": "ProgramDir\\Tools\\PSTools.cat",
+  "EnablePsExecCatalogValidation": true,
+  "PsExecExpectedSigner": "Microsoft",
+  "PsExecExpectedThumbprint": "",
+  "PsExecExpectedPublicKey": "",
+  "PsExecDownloadSource": "https://download.sysinternals.com/files/PSTools.zip",
+  "LatestPublishedPsExecVersion": "",
+  "LocalPsExecVersion": "",
+  "PsExecVersionStatus": "Unknown",
+  "LastPsExecVersionCheck": "",
+  "LastDownloadSource": "",
+  "LastDownloadValidationResult": ""
+}

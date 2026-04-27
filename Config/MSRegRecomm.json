@@ -1,0 +1,287 @@
+[
+  {
+    "Category": "Delivery Optimization",
+    "SettingName": "Policy DODownloadMode",
+    "Recommendation": "1 (LAN) oder 2 (Group) – Microsoft beschreibt LAN als Standardmodus; in verteilten Standorten Group verwenden, wenn Peering standortübergreifend gewünscht ist."
+  },
+  {
+    "Category": "Delivery Optimization",
+    "SettingName": "Policy DOGroupId",
+    "Recommendation": "Nur setzen, wenn DownloadMode=2 (Group) bewusst verwendet wird; sonst nicht erforderlich."
+  },
+  {
+    "Category": "Delivery Optimization",
+    "SettingName": "Policy DODelayBackgroundDownloadFromHttp",
+    "Recommendation": "60 – Microsoft empfiehlt 60 Sekunden."
+  },
+  {
+    "Category": "Delivery Optimization",
+    "SettingName": "Policy DODelayForegroundDownloadFromHttp",
+    "Recommendation": "60 – Microsoft empfiehlt 60 Sekunden."
+  },
+  {
+    "Category": "Delivery Optimization",
+    "SettingName": "Policy DOMinRAMAllowedToPeer",
+    "Recommendation": "4 – Microsoft empfiehlt mindestens 4 GB RAM für Peer Caching."
+  },
+  {
+    "Category": "Delivery Optimization",
+    "SettingName": "Policy DOMinDiskSizeAllowedToPeer",
+    "Recommendation": "32 – Microsoft empfiehlt mindestens 32 GB Datenträgergröße für Peer Caching."
+  },
+  {
+    "Category": "Delivery Optimization",
+    "SettingName": "Policy DOMinFileSizeToCache",
+    "Recommendation": "10 – Microsoft empfiehlt mindestens 10 MB Dateigröße für Peer Caching."
+  },
+  {
+    "Category": "Delivery Optimization",
+    "SettingName": "Policy DOMaxCacheAge",
+    "Recommendation": "7 – Microsoft empfiehlt 7 Tage Cache-Alter."
+  },
+  {
+    "Category": "Delivery Optimization",
+    "SettingName": "Effective DODownloadMode",
+    "Recommendation": "Soll in einem gesunden Intune-Szenario typischerweise 1 (LAN) oder 2 (Group) widerspiegeln, sofern Peering genutzt wird."
+  },
+  {
+    "Category": "Delivery Optimization",
+    "SettingName": "PolicyManager DODownloadMode",
+    "Recommendation": "Soll in einem gesunden Intune-Szenario typischerweise 1 (LAN) oder 2 (Group) widerspiegeln, sofern Peering genutzt wird."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "UseWUServer",
+    "Recommendation": "0 oder nicht gesetzt – für cloudbasiertes Intune/WUfB nicht auf WSUS erzwingen."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "WUServer",
+    "Recommendation": "Nicht gesetzt – nur setzen, wenn bewusst WSUS statt Windows Update / WUfB verwendet wird."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "WUStatusServer",
+    "Recommendation": "Nicht gesetzt – nur bei bewusstem WSUS-Betrieb erforderlich."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "NoAutoUpdate",
+    "Recommendation": "0 oder nicht gesetzt – automatische Updates nicht global abschalten."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "AUOptions",
+    "Recommendation": "3 oder 4 – automatische Downloads sollen erlaubt sein; konkrete Nutzererfahrung je Ring-/UX-Policy."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "DetectionFrequencyEnabled",
+    "Recommendation": "Nicht gesetzt – nur gezielt konfigurieren, wenn ein abweichender Scan-Rhythmus nötig ist."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "DetectionFrequency",
+    "Recommendation": "Nicht gesetzt – nur zusammen mit DetectionFrequencyEnabled sinnvoll."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "DoNotConnectToWindowsUpdateInternetLocations",
+    "Recommendation": "0 oder nicht gesetzt – öffentliche Windows-Update-Dienste nicht blockieren; sonst können Microsoft Update und Microsoft Store beeinträchtigt werden."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "AllowMUUpdateService",
+    "Recommendation": "1 oder nicht gesetzt – Microsoft Update für App-/Produktupdates zulassen."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "ExcludeWUDriversInQualityUpdate",
+    "Recommendation": "0 oder nicht gesetzt – nur blockieren, wenn Treiber bewusst separat gesteuert werden."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "SetPolicyDrivenUpdateSourceForQualityUpdates",
+    "Recommendation": "1 in cloudbasierten WUfB-/Intune-Szenarien, damit Qualitätsupdates von Microsoft Update kommen."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "SetPolicyDrivenUpdateSourceForFeatureUpdates",
+    "Recommendation": "1 in cloudbasierten WUfB-/Intune-Szenarien, damit Featureupdates von Microsoft Update kommen."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "SetPolicyDrivenUpdateSourceForDriverUpdates",
+    "Recommendation": "1, wenn Treiber bewusst über Microsoft Update/Intune bezogen werden; sonst organisationsabhängig."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "SetPolicyDrivenUpdateSourceForOtherUpdates",
+    "Recommendation": "1, wenn sonstige Updates über Microsoft Update bezogen werden sollen; in WSUS-Szenarien organisationsabhängig."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "BranchReadinessLevel",
+    "Recommendation": "Nicht hart erzwingen – moderne WUfB-Steuerung erfolgt primär über Rings, Deferrals und Zielrelease."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "DeferFeatureUpdates",
+    "Recommendation": "1 nur wenn Deferral bewusst genutzt wird; sonst nicht gesetzt."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "DeferFeatureUpdatesPeriodInDays",
+    "Recommendation": "Organisationsabhängig – typischerweise gemäß Ring-Modell, nicht wahllos hoch setzen."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "DeferQualityUpdates",
+    "Recommendation": "1 nur wenn Deferral bewusst genutzt wird; sonst nicht gesetzt."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "DeferQualityUpdatesPeriodInDays",
+    "Recommendation": "Organisationsabhängig – typischerweise kurze Deferrals gemäß Ring-Modell."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "TargetReleaseVersion",
+    "Recommendation": "1 nur wenn Geräte gezielt auf einer Windows-Version gehalten werden sollen."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "TargetReleaseVersionInfo",
+    "Recommendation": "Setzen, wenn TargetReleaseVersion=1 aktiv ist; sonst nicht erforderlich."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "ProductVersion",
+    "Recommendation": "Setzen, wenn mit TargetReleaseVersion bewusst auf Windows 10/11 festgelegt wird."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "DisableDualScan",
+    "Recommendation": "1 in Mischszenarien mit WSUS, um unerwünschtes Dual Scan zu vermeiden; in reinem WUfB oft nicht nötig."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "PauseFeatureUpdatesStartTime",
+    "Recommendation": "Nur temporär verwenden; im Normalbetrieb nicht gesetzt."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "PauseQualityUpdatesStartTime",
+    "Recommendation": "Nur temporär verwenden; im Normalbetrieb nicht gesetzt."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "AllowAutoUpdate",
+    "Recommendation": "Nicht blockieren – automatische Updates sollen im Regelfall erlaubt sein."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "UpdateNotificationLevel",
+    "Recommendation": "Organisationsabhängig – Nutzererfahrung über Update-Ringe steuern."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "AllowMUUpdateService",
+    "Recommendation": "Erlauben bzw. nicht blockieren, damit App-/Produktupdates von Microsoft Update möglich bleiben."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "DoNotConnectToWindowsUpdateInternetLocations",
+    "Recommendation": "Nicht aktivieren, wenn Intune/WUfB bzw. Microsoft Store sauber funktionieren sollen."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "SetPolicyDrivenUpdateSourceForQualityUpdates",
+    "Recommendation": "1 in cloudbasierten WUfB-/Intune-Szenarien."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "SetPolicyDrivenUpdateSourceForFeatureUpdates",
+    "Recommendation": "1 in cloudbasierten WUfB-/Intune-Szenarien."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "SetPolicyDrivenUpdateSourceForDriverUpdates",
+    "Recommendation": "1, wenn Treiber über Microsoft Update/Intune bezogen werden sollen."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "SetPolicyDrivenUpdateSourceForOtherUpdates",
+    "Recommendation": "1, wenn sonstige Updates über Microsoft Update bezogen werden sollen."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "DisableWindowsUpdateAccess",
+    "Recommendation": "0 – nicht blockieren, wenn Benutzer und Support den Windows-Update-Client normal erreichen sollen."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "SetDisableUXWUAccess",
+    "Recommendation": "0 – die Windows-Update-Oberfläche nicht künstlich sperren, sofern dies nicht bewusst organisatorisch gefordert ist."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "DoNotAllowUpdateDeferralPoliciesToCauseScanAgainstWindowsUpdate",
+    "Recommendation": "0 – nur aktivieren, wenn bewusst verhindert werden soll, dass Deferral-Richtlinien gegen Windows Update scannen."
+  },
+  {
+    "Category": "Windows Update",
+    "SettingName": "UseUpdateClassPolicySource",
+    "Recommendation": "0 oder nicht gesetzt, solange keine getrennte Quellsteuerung pro Updateklasse bewusst genutzt wird."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "ManagePreviewBuilds",
+    "Recommendation": "0 oder nicht gesetzt, solange keine Preview-Build-Steuerung gewünscht ist."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "ManagePreviewBuildsPolicyValue",
+    "Recommendation": "Nur setzen, wenn Preview-Builds bewusst gesteuert werden."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "PauseFeatureUpdatesEndTime",
+    "Recommendation": "Leer bzw. abgelaufen – Pausen nur temporär einsetzen."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "PauseQualityUpdatesEndTime",
+    "Recommendation": "Leer bzw. abgelaufen – Pausen nur temporär einsetzen."
+  },
+  {
+    "Category": "Windows Update for Business",
+    "SettingName": "PauseUpdatesExpiryTime",
+    "Recommendation": "Leer bzw. abgelaufen – keine dauerhaft hängenden Pausen."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "ExcludeWUDriversInQualityUpdate",
+    "Recommendation": "0, sofern Treiber nicht bewusst ausgeschlossen werden sollen."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "UseUpdateClassPolicySource",
+    "Recommendation": "0 oder nicht gesetzt, solange keine getrennte Quellsteuerung pro Updateklasse bewusst genutzt wird."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "ProductVersion",
+    "Recommendation": "Nur setzen, wenn ein Zielrelease bewusst erzwungen wird."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "TargetReleaseVersion",
+    "Recommendation": "0 oder nicht gesetzt, sofern kein fixes Zielrelease erzwungen wird."
+  },
+  {
+    "Category": "PolicyManager Update",
+    "SettingName": "TargetReleaseVersionInfo",
+    "Recommendation": "Nur zusammen mit aktiviertem TargetReleaseVersion setzen."
+  }
+]
