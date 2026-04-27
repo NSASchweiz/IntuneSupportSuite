@@ -239,6 +239,6 @@
     "reset Signing state": "reset Signing state",
     "shortDestinationLogs": "shortDestinationLogs",
     "simulationMode": "simulationMode",
-    "winget wurde nicht gefunden. PsExec wurde im Programmverzeichnis von DAP Intune Support Suite bereitgestellt und wird von dort verwendet.": "winget was not found. PsExec was provided in the {AppDisplayName} program directory and is used from there."
+    "winget wurde nicht gefunden. PsExec wurde im Programmverzeichnis von {AppDisplayName} bereitgestellt und wird von dort verwendet.": "winget was not found. PsExec was provided in the {AppDisplayName} program directory and is used from there."
   }
 }

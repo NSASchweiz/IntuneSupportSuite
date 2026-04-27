@@ -4,13 +4,13 @@ namespace DapIntuneSupportSuite.Models;
 
 public sealed class TrustedConfig
 {
-    public string ConfigVersion { get; set; } = "1.1.0-hotfix8";
+    public string ConfigVersion { get; set; } = "1.1.1-Test-hotfix8";
     public string TrustedConfigPath { get; set; } = string.Empty;
     public string TrustLogPath { get; set; } = string.Empty;
-    public string RemoteAuditLogDirectory { get; set; } = @"C:\ProgramData\ktzh\logs\DAP Intune Support Suite";
+    public string RemoteAuditLogDirectory { get; set; } = @"C:\ProgramData\ktzh\logs\Intune Support Suite";
     public string RemoteImeLogDirectory { get; set; } = @"C:\ProgramData\Microsoft\IntuneManagementExtension\Logs";
-    public string RemoteTempDirectory { get; set; } = @"C:\ProgramData\DAPIntuneSupportSuite\Temp";
-    public string SupportClientDirectory { get; set; } = @"C:\ProgramData\DAP Intune Support Client";
+    public string RemoteTempDirectory { get; set; } = @"C:\ProgramData\IntuneSupportSuite\Temp";
+    public string SupportClientDirectory { get; set; } = @"C:\ProgramData\Intune Support Client";
     public string PowerShellExecutable { get; set; } = "powershell.exe";
     public string PsExecPath { get; set; } = string.Empty;
     public string ToolsDirectoryPath { get; set; } = @"ProgramDir\Tools";
@@ -28,9 +28,9 @@ public sealed class TrustedConfig
     public string LastDownloadValidationResult { get; set; } = string.Empty;
     public string FallbackConfigFileName { get; set; } = "fallbackconfig.json";
     public string FallbackScriptFileName { get; set; } = "fallbackcore.ps1";
-    public string FallbackScheduledTaskName { get; set; } = "DAPIntuneSupportFallback";
-    public string FallbackRunOnceValueName { get; set; } = "DAPIntuneSupportFallback";
-    public string RemoteFallbackLogFileName { get; set; } = "DAP-Fallback.log";
+    public string FallbackScheduledTaskName { get; set; } = "IntuneSupportSuiteFallback";
+    public string FallbackRunOnceValueName { get; set; } = "IntuneSupportSuiteFallback";
+    public string RemoteFallbackLogFileName { get; set; } = "Intune-Support-Suite-Fallback.log";
     public bool ConnectionFallback { get; set; } = false;
     public bool RestoreRemotingState { get; set; } = false;
     public string[] RegistryPathsForAppReset { get; set; } =

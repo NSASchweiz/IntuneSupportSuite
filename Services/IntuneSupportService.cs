@@ -24,7 +24,7 @@ public sealed class IntuneSupportService
         ["EnablePsRemoting"] = "PSRemoting wird aktiviert...",
         ["RestoreRemoting"] = "PSRemoting-Ursprungszustand wird wiederhergestellt..."
     };
-    public static readonly IReadOnlyDictionary<string, string> LogKeyToFileMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    private IReadOnlyDictionary<string, string> LogKeyToFileMap => new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
         ["AgentExecutor"] = "AgentExecutor.log",
         ["AppActionProcessor"] = "AppActionProcessor.log",
@@ -44,10 +44,10 @@ public sealed class IntuneSupportService
         ["Sensor"] = "Sensor.log",
         ["Win321AppInventory"] = "Win32AppInventory.log",
         ["Win32AppsRegistry"] = "Win32Apps Registry",
-        ["LocalAppLog"] = "DAP Intune Support",
+        ["LocalAppLog"] = LanguageManager.Instance.GetLocalAppLogLabel(),
         ["AppDataLogs"] = "Log Verlauf",
-        ["RemoteAuditLog"] = "DAP-Remote-Audit.log",
-        ["FallbackLog"] = "DAP-Fallback.log",
+        ["RemoteAuditLog"] = LanguageManager.Instance.GetRemoteAuditLogLabel(),
+        ["FallbackLog"] = LanguageManager.Instance.GetFallbackLogLabel(),
         ["TrustLog"] = "Trust Log"
     };
 
@@ -338,6 +338,7 @@ public sealed class IntuneSupportService
             ["FallbackScriptFileName"] = _config.FallbackScriptFileName,
             ["FallbackScheduledTaskName"] = _config.FallbackScheduledTaskName,
             ["FallbackRunOnceValueName"] = _config.FallbackRunOnceValueName,
+            ["RemoteAuditLogFileName"] = LanguageManager.Instance.GetRemoteAuditLogFileName(),
             ["RemoteFallbackLogFileName"] = _config.RemoteFallbackLogFileName,
             ["ConnectionFallback"] = _config.ConnectionFallback.ToString(),
             ["RestoreRemotingState"] = _config.RestoreRemotingState.ToString(),
@@ -529,7 +530,7 @@ public sealed class IntuneSupportService
     private List<string> ReadRemoteBootstrapLogLines(string deviceName, int maxLines)
     {
         var lines = new List<string>();
-        foreach (var fileName in new[] { "DAP-Fallback.log", "DAP-Remote-Audit.log" })
+        foreach (var fileName in LanguageManager.Instance.GetKnownFallbackLogFileNameVariants().Concat(LanguageManager.Instance.GetKnownRemoteAuditLogFileNameVariants()).Distinct(StringComparer.OrdinalIgnoreCase))
         {
             var uncPath = BuildRemoteUncPath(deviceName, Path.Combine(_config.RemoteAuditLogDirectory, fileName));
             if (!File.Exists(uncPath))
@@ -564,13 +565,15 @@ public sealed class IntuneSupportService
             return null;
         }
 
-        var activePath = Path.Combine(directory, "DAP-Intune-Support.log");
+        var activePath = Path.Combine(directory, LanguageManager.Instance.GetLocalAppLogFileName());
         if (File.Exists(activePath))
         {
             return activePath;
         }
 
-        return Directory.GetFiles(directory, "DAP-Intune-Support*.log")
+        return LanguageManager.Instance.GetKnownLocalAppLogFileNameVariants()
+            .SelectMany(fileName => Directory.GetFiles(directory, Path.GetFileNameWithoutExtension(fileName) + "*.log"))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderByDescending(File.GetLastWriteTimeUtc)
             .FirstOrDefault();
     }
@@ -618,7 +621,9 @@ public sealed class IntuneSupportService
             return [];
         }
 
-        return Directory.GetFiles(directory, "DAP-Intune-Support*.log")
+        return LanguageManager.Instance.GetKnownLocalAppLogFileNameVariants()
+            .SelectMany(fileName => Directory.GetFiles(directory, Path.GetFileNameWithoutExtension(fileName) + "*.log"))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
             .SelectMany(path => ReadTailLinesShared(path, 200))
             .TakeLast(1000)

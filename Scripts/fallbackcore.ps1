@@ -8,7 +8,8 @@ if (-not (Test-Path -Path $configPath)) {
 
 $operationId = 'unknown'
 $auditDir = $supportDir
-$fallbackLogFile = 'DAP-Fallback.log'
+$fallbackLogFile = 'Intune-Support-Suite-Fallback.log'
+$remoteAuditLogFile = 'Intune-Support-Suite-Remote-Audit.log'
 $script:sourceHost = ''
 
 function Write-FallbackLine {
@@ -37,7 +38,7 @@ function Write-FallbackLine {
         ) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | ForEach-Object { $_.Trim() }
 
         $line = "{0}`t{1}`tSource=FallbackCore`tAction={2}`tOperationId={3}`tUser={4}`tSourceHost={5}`tDestinationHost={6}`tResult={7}`tPath={8}`tDetails={9}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $Level, $Action, $operationId, $env:USERNAME, $sourceHostValue, $env:COMPUTERNAME, $Result, $Path, ($enrichedDetails -join '; ')
-        foreach ($fileName in @('DAP-Remote-Audit.log', $fallbackLogFile)) {
+        foreach ($fileName in @($remoteAuditLogFile, $fallbackLogFile)) {
             Add-Content -Path (Join-Path $auditDir $fileName) -Value $line -Encoding UTF8
         }
     }
@@ -153,6 +154,7 @@ function Test-FallbackConfigValidity {
         'OperationId',
         'SupportClientDirectory',
         'RemoteAuditLogDirectory',
+        'RemoteAuditLogFileName',
         'RemoteFallbackLogFileName',
         'FallbackScriptPath',
         'FallbackConfigPath',
@@ -168,7 +170,7 @@ function Test-FallbackConfigValidity {
         }
     }
 
-    foreach ($propertyName in @('OperationId','SupportClientDirectory','RemoteAuditLogDirectory','FallbackScriptPath','FallbackConfigPath','FallbackScheduledTaskName','FallbackRunOnceValueName')) {
+    foreach ($propertyName in @('OperationId','SupportClientDirectory','RemoteAuditLogDirectory','RemoteAuditLogFileName','FallbackScriptPath','FallbackConfigPath','FallbackScheduledTaskName','FallbackRunOnceValueName')) {
         if ([string]::IsNullOrWhiteSpace([string]$config.$propertyName)) {
             $result.Message = "Pflichtfeld leer: $propertyName"
             return [pscustomobject]$result
@@ -287,7 +289,8 @@ $config = $validation.Config
 if ($null -ne $config) {
     $operationId = if ($config.OperationId) { $config.OperationId } else { 'unknown' }
     $auditDir = if ($config.RemoteAuditLogDirectory) { $config.RemoteAuditLogDirectory } else { $supportDir }
-    $fallbackLogFile = if ($config.RemoteFallbackLogFileName) { $config.RemoteFallbackLogFileName } else { 'DAP-Fallback.log' }
+    $remoteAuditLogFile = if ($config.RemoteAuditLogFileName) { $config.RemoteAuditLogFileName } else { 'Intune-Support-Suite-Remote-Audit.log' }
+    $fallbackLogFile = if ($config.RemoteFallbackLogFileName) { $config.RemoteFallbackLogFileName } else { 'Intune-Support-Suite-Fallback.log' }
     $script:sourceHost = if ($config.JumpHost) { $config.JumpHost } else { '' }
 }
 

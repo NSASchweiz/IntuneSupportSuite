@@ -12,7 +12,7 @@ namespace DapIntuneSupportSuite.Services;
 
 public sealed class ConfigBootstrapper
 {
-    private const string CurrentConfigVersion = "1.1.1-Test-hotfix6";
+    private const string CurrentConfigVersion = "1.1.1-Test-hotfix8";
     private readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true, PropertyNameCaseInsensitive = true };
     private readonly TrustedConfigValidator _validator = new();
     private readonly ConfigPathValidator _pathValidator = new();
@@ -45,7 +45,7 @@ public sealed class ConfigBootstrapper
 
         var executableDirectory = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         var catalogPath = Path.Combine(executableDirectory, "catalog", "TrustedConfig.cat");
-        var exePath = Environment.ProcessPath ?? Path.Combine(executableDirectory, "DapIntuneSupportSuite.exe");
+        var exePath = Environment.ProcessPath ?? Path.Combine(executableDirectory, "IntuneSupportSuite.exe");
         return string.Join("||",
             DescribeFile(config.TrustedConfigFilePath),
             DescribeFile(catalogPath),
@@ -148,7 +148,7 @@ public sealed class ConfigBootstrapper
 
         var verifier = new AuthentiCodeVerifier();
         var catalogVerifier = new FileCatalogVerifier();
-        var exePath = Environment.ProcessPath ?? Path.Combine(executableDirectory, "DapIntuneSupportSuite.exe");
+        var exePath = Environment.ProcessPath ?? Path.Combine(executableDirectory, "IntuneSupportSuite.exe");
         var exeSignature = verifier.Verify(exePath);
         var trustedCatalogSignature = verifier.Verify(trustedCatalogPath);
         var catalogMatch = catalogVerifier.Verify(trustedCatalogPath, trustedConfigPath);
@@ -799,7 +799,7 @@ public sealed class ConfigBootstrapper
 
         var verifier = new AuthentiCodeVerifier();
         var catalogVerifier = new FileCatalogVerifier();
-        var exePath = Environment.ProcessPath ?? Path.Combine(executableDirectory, "DapIntuneSupportSuite.exe");
+        var exePath = Environment.ProcessPath ?? Path.Combine(executableDirectory, "IntuneSupportSuite.exe");
         var exeSignature = verifier.Verify(exePath);
         var trustedCatalogSignature = verifier.Verify(trustedCatalogPath);
         var catalogMatch = catalogVerifier.Verify(trustedCatalogPath, config.TrustedConfigFilePath);
@@ -910,11 +910,11 @@ public sealed class ConfigBootstrapper
 
     private static IEnumerable<(string Name, string Scope, bool OldValue, bool NewValue)> GetLogTabDefinitions(LogTabVisibilityConfig previous, LogTabVisibilityConfig current)
     {
-        yield return ("DAP Intune Support", "local", previous.LocalAppLog.IsVisible, current.LocalAppLog.IsVisible);
+        yield return (LanguageManager.Instance.GetLocalAppLogLabel(), "local", previous.LocalAppLog.IsVisible, current.LocalAppLog.IsVisible);
         yield return ("Log Verlauf", "local", previous.AppDataLogs.IsVisible, current.AppDataLogs.IsVisible);
         yield return ("Trust Log", "local", previous.TrustLog.IsVisible, current.TrustLog.IsVisible);
-        yield return ("DAP Remote Audit Log", "remote", previous.RemoteAuditLog.IsVisible, current.RemoteAuditLog.IsVisible);
-        yield return ("DAP Fallback Log", "remote", previous.FallbackLog.IsVisible, current.FallbackLog.IsVisible);
+        yield return (LanguageManager.Instance.GetRemoteAuditLogLabel(), "remote", previous.RemoteAuditLog.IsVisible, current.RemoteAuditLog.IsVisible);
+        yield return (LanguageManager.Instance.GetFallbackLogLabel(), "remote", previous.FallbackLog.IsVisible, current.FallbackLog.IsVisible);
         yield return ("AgentExecutor", "remote", previous.AgentExecutor.IsVisible, current.AgentExecutor.IsVisible);
         yield return ("AppActionProcessor", "remote", previous.AppActionProcessor.IsVisible, current.AppActionProcessor.IsVisible);
         yield return ("AppWorkload", "remote", previous.AppWorkload.IsVisible, current.AppWorkload.IsVisible);

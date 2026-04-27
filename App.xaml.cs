@@ -88,7 +88,7 @@ public partial class App : Application
                 if (startupResult.ShowDirectInstallHint)
                 {
                     MessageBox.Show(
-                        LanguageManager.Instance.TranslateText("winget wurde nicht gefunden. PsExec wurde im Programmverzeichnis von DAP Intune Support Suite bereitgestellt und wird von dort verwendet."),
+                        LanguageManager.Instance.TranslateText("winget wurde nicht gefunden. PsExec wurde im Programmverzeichnis von {AppDisplayName} bereitgestellt und wird von dort verwendet."),
                         appConfig.WindowTitle,
                         MessageBoxButton.OK,
                         MessageBoxImage.Information);

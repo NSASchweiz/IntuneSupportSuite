@@ -9,6 +9,7 @@ param(
     [Parameter(Mandatory = $true)] [string]$FallbackScheduledTaskName,
     [Parameter(Mandatory = $true)] [string]$FallbackRunOnceValueName,
     [Parameter(Mandatory = $true)] [string]$RemoteAuditLogDirectory,
+    [Parameter(Mandatory = $true)] [string]$RemoteAuditLogFileName,
     [Parameter(Mandatory = $true)] [string]$RemoteFallbackLogFileName,
     [Parameter(Mandatory = $false)] [string]$ConnectionFallback = 'False',
     [Parameter(Mandatory = $false)] [string]$RestoreRemotingState = 'True',
@@ -53,14 +54,14 @@ try {
     if ($RestoreRemotingState -eq 'True') {
         $copyResult = Copy-RemoteSupportFile -ComputerName $ComputerName -RemoteDirectory $SupportClientDirectory -SourcePath (Join-Path $PSScriptRoot 'fallbackcore.ps1') -TargetFileName $FallbackScriptFileName
         $copyMessage = if ($copyResult.ExistedBefore) { 'fallbackcore.ps1 wurde auf dem Zielgerät aktualisiert.' } else { 'fallbackcore.ps1 wurde auf dem Zielgerät erstellt.' }
-        Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'FallbackScript' -Message $copyMessage -AffectedPath (Join-Path $SupportClientDirectory $FallbackScriptFileName) -Result $copyResult.Result
+        Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'FallbackScript' -Message $copyMessage -AffectedPath (Join-Path $SupportClientDirectory $FallbackScriptFileName) -Result $copyResult.Result
 
-        $bootstrapResult = New-RemoteFallbackConfig -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $FallbackConfigFileName -FallbackScriptFileName $FallbackScriptFileName -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -FallbackScheduledTaskName $FallbackScheduledTaskName -FallbackRunOnceValueName $FallbackRunOnceValueName -OperationId $OperationId -FallbackTaskDelayMinutes $FallbackTaskDelayMinutes -SourceHost $SourceHost -ExpectedAppSignerThumbprint $ExpectedAppSignerThumbprint -ExpectedAppSignerPublicKey $ExpectedAppSignerPublicKey
+        $bootstrapResult = New-RemoteFallbackConfig -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $FallbackConfigFileName -FallbackScriptFileName $FallbackScriptFileName -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -FallbackScheduledTaskName $FallbackScheduledTaskName -FallbackRunOnceValueName $FallbackRunOnceValueName -OperationId $OperationId -FallbackTaskDelayMinutes $FallbackTaskDelayMinutes -SourceHost $SourceHost -ExpectedAppSignerThumbprint $ExpectedAppSignerThumbprint -ExpectedAppSignerPublicKey $ExpectedAppSignerPublicKey
         if (-not $bootstrapResult.Success) {
             throw "Fallback konnte nicht vorbereitet werden: $($bootstrapResult.StandardError)"
         }
 
-        $taskRetryResult = Retry-RemoteFallbackScheduledTask -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $FallbackConfigFileName -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -FallbackScheduledTaskName $FallbackScheduledTaskName -OperationId $OperationId -FallbackTaskDelayMinutes $FallbackTaskDelayMinutes -SourceHost $SourceHost -ExpectedAppSignerThumbprint $ExpectedAppSignerThumbprint -ExpectedAppSignerPublicKey $ExpectedAppSignerPublicKey
+        $taskRetryResult = Retry-RemoteFallbackScheduledTask -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $FallbackConfigFileName -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -FallbackScheduledTaskName $FallbackScheduledTaskName -OperationId $OperationId -FallbackTaskDelayMinutes $FallbackTaskDelayMinutes -SourceHost $SourceHost -ExpectedAppSignerThumbprint $ExpectedAppSignerThumbprint -ExpectedAppSignerPublicKey $ExpectedAppSignerPublicKey
         if (-not $taskRetryResult.Success) {
             Write-Warning "Scheduled Task Retry meldete einen Fehler: $($taskRetryResult.StandardError)"
         }
@@ -68,11 +69,11 @@ try {
         $fallbackPrepared = $true
     }
     else {
-        Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'FallbackArm' -Message 'ConnectionFallback aktiv, RestoreRemotingState deaktiviert. Es wird kein Restore-Fallback auf dem Zielgerät abgelegt.'
+        Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'FallbackArm' -Message 'ConnectionFallback aktiv, RestoreRemotingState deaktiviert. Es wird kein Restore-Fallback auf dem Zielgerät abgelegt.'
     }
 
     $fallbackConfigArg = if ($RestoreRemotingState -eq 'True') { $FallbackConfigFileName } else { '' }
-    $enableResult = Enable-TemporaryPsRemoting -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $fallbackConfigArg -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost
+    $enableResult = Enable-TemporaryPsRemoting -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $fallbackConfigArg -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost
     if (-not $enableResult.Success) {
         throw "PSRemoting konnte nicht aktiviert werden: $($enableResult.StandardError)"
     }
@@ -81,7 +82,7 @@ try {
     if ([string]::IsNullOrWhiteSpace($remotingResult)) {
         throw 'PSRemoting-Test lieferte keine gültige Antwort.'
     }
-    Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'VerifyPsRemoting' -Message 'PSRemoting wurde erfolgreich verifiziert.'
+    Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'VerifyPsRemoting' -Message 'PSRemoting wurde erfolgreich verifiziert.'
 
     Write-Output ("ConnectionMode=Bootstrap;FallbackPrepared={0}" -f $fallbackPrepared)
     exit 0

@@ -5,9 +5,9 @@
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>DapIntuneSupportSuite</AssemblyName>
-    <RootNamespace>DapIntuneSupportSuite</RootNamespace>
-    <Version>1.1.1-Test-hotfix6</Version>
+    <AssemblyName>IntuneSupportSuite</AssemblyName>
+    <RootNamespace>IntuneSupportSuite</RootNamespace>
+    <Version>1.1.1-Test-hotfix8</Version>
     <Platforms>AnyCPU</Platforms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>

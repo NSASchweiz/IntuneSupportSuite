@@ -522,7 +522,7 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                         </TabItem>
-                        <TabItem Header="DAP Remote Audit Log" Visibility="{Binding IsRemoteAuditVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TabItem Header="Intune Support Suite Remote Audit Log" Visibility="{Binding IsRemoteAuditVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <DataGrid ItemsSource="{Binding RemoteAuditEntriesView}" Style="{StaticResource AppLogDataGridStyle}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Zeit" Binding="{Binding DisplayTimestamp}" Width="170" />
@@ -532,7 +532,7 @@
                                 </DataGrid.Columns>
                             </DataGrid>
                         </TabItem>
-                        <TabItem Header="DAP Fallback Log" Visibility="{Binding IsFallbackVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TabItem Header="Intune Support Suite Fallback Log" Visibility="{Binding IsFallbackVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <DataGrid ItemsSource="{Binding FallbackEntriesView}" Style="{StaticResource AppLogDataGridStyle}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Zeit" Binding="{Binding DisplayTimestamp}" Width="170" />
@@ -580,7 +580,7 @@
                     </Border>
 
                     <TabControl Grid.Row="2" Margin="8,0,0,0">
-                        <TabItem Header="DAP Intune Support" Style="{StaticResource LocalLogTabItemStyle}" Visibility="{Binding IsLocalAppLogVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TabItem Header="Intune Support Suite" Style="{StaticResource LocalLogTabItemStyle}" Visibility="{Binding IsLocalAppLogVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <DataGrid ItemsSource="{Binding LocalAppLogEntriesView}" Style="{StaticResource AppLogDataGridStyle}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Zeit" Binding="{Binding DisplayTimestamp}" Width="170" />

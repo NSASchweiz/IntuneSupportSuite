@@ -5,14 +5,14 @@ namespace DapIntuneSupportSuite.Models;
 
 public sealed class AppConfig
 {
-    public string ConfigVersion { get; set; } = "1.1.1-Test-hotfix6";
+    public string ConfigVersion { get; set; } = "1.1.1-Test-hotfix8";
     public string WindowTitle { get; set; } = "Intune Support Suite";
     public string AppDataFolderName { get; set; } = "Intune Support Suite";
     public string LocalLogDirectory { get; set; } = @"%APPDATA%\Intune Support Suite\Logs";
-    public string RemoteAuditLogDirectory { get; set; } = @"C:\ProgramData\ktzh\logs\DAP Intune Support Suite";
+    public string RemoteAuditLogDirectory { get; set; } = @"C:\ProgramData\ktzh\logs\Intune Support Suite";
     public string RemoteImeLogDirectory { get; set; } = @"C:\ProgramData\Microsoft\IntuneManagementExtension\Logs";
-    public string RemoteTempDirectory { get; set; } = @"C:\ProgramData\DAPIntuneSupportSuite\Temp";
-    public string SupportClientDirectory { get; set; } = @"C:\ProgramData\DAP Intune Support Client";
+    public string RemoteTempDirectory { get; set; } = @"C:\ProgramData\IntuneSupportSuite\Temp";
+    public string SupportClientDirectory { get; set; } = @"C:\ProgramData\Intune Support Client";
     public string PowerShellExecutable { get; set; } = "powershell.exe";
     public string PsExecPath { get; set; } = string.Empty;
     public string ToolsDirectoryPath { get; set; } = string.Empty;
@@ -39,9 +39,9 @@ public sealed class AppConfig
     public string LocalProcessingDirectory { get; set; } = @"%APPDATA%\Intune Support Suite\ProcessedLogs";
     public string FallbackConfigFileName { get; set; } = "fallbackconfig.json";
     public string FallbackScriptFileName { get; set; } = "fallbackcore.ps1";
-    public string FallbackScheduledTaskName { get; set; } = "DAPIntuneSupportFallback";
-    public string FallbackRunOnceValueName { get; set; } = "DAPIntuneSupportFallback";
-    public string RemoteFallbackLogFileName { get; set; } = "DAP-Fallback.log";
+    public string FallbackScheduledTaskName { get; set; } = "IntuneSupportSuiteFallback";
+    public string FallbackRunOnceValueName { get; set; } = "IntuneSupportSuiteFallback";
+    public string RemoteFallbackLogFileName { get; set; } = "Intune-Support-Suite-Fallback.log";
     public bool ConnectionFallback { get; set; }
     public bool RestoreRemotingState { get; set; } = false;
     public string[] DefaultLogFiles { get; set; } =

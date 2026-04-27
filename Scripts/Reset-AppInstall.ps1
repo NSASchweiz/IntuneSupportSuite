@@ -3,6 +3,7 @@ param(
     [Parameter(Mandatory = $true)] [string]$AppGuid,
     [Parameter(Mandatory = $true)] [string]$RegistryPathsCsv,
     [Parameter(Mandatory = $true)] [string]$RemoteAuditLogDirectory,
+    [Parameter(Mandatory = $true)] [string]$RemoteAuditLogFileName,
     [Parameter(Mandatory = $true)] [string]$ServiceName,
     [Parameter(Mandatory = $false)] [string]$SimulationMode = 'False',
     [Parameter(Mandatory = $true)] [string]$PsExecPath,
@@ -26,10 +27,10 @@ if ($SimulationMode -eq 'True') { Write-Output 'SIMULATION'; exit 0 }
 if ([string]::IsNullOrWhiteSpace($OperationId)) { $OperationId = [guid]::NewGuid().ToString() }
 $registryPaths = $RegistryPathsCsv -split ';' | Where-Object { $_ }
 function Invoke-Reset {
-    Invoke-Command -ComputerName $ComputerName -ArgumentList $AppGuid,$registryPaths,$RemoteAuditLogDirectory,$ServiceName,$OperationId -ScriptBlock {
-        param($AppGuid,$RegistryPaths,$RemoteAuditLogDirectory,$ServiceName,$OperationId)
+    Invoke-Command -ComputerName $ComputerName -ArgumentList $AppGuid,$registryPaths,$RemoteAuditLogDirectory,$RemoteAuditLogFileName,$ServiceName,$OperationId -ScriptBlock {
+        param($AppGuid,$RegistryPaths,$RemoteAuditLogDirectory,$RemoteAuditLogFileName,$ServiceName,$OperationId)
         $null = New-Item -Path $RemoteAuditLogDirectory -ItemType Directory -Force
-        $auditFile = Join-Path $RemoteAuditLogDirectory 'DAP-Remote-Audit.log'
+        $auditFile = Join-Path $RemoteAuditLogDirectory $RemoteAuditLogFileName
         Add-Content -Path $auditFile -Value ("{0}`tINFO`tSource=RemoteAction`tOperationId={1}`tTarget={2}`tAction=ResetAppInstall`tGuid={3}`tMessage=Reset App Install gestartet." -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'),$OperationId,$env:COMPUTERNAME,$AppGuid) -Encoding UTF8
         $pathsToRemove = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)
         function Add-RemovalPath {
@@ -150,15 +151,15 @@ try {
         if ($RestoreRemotingState -eq 'True') {
             $copyResult = Copy-RemoteSupportFile -ComputerName $ComputerName -RemoteDirectory $SupportClientDirectory -SourcePath (Join-Path $PSScriptRoot 'fallbackcore.ps1') -TargetFileName $FallbackScriptFileName
             $copyMessage = if ($copyResult.ExistedBefore) { 'fallbackcore.ps1 wurde auf dem Zielgerät aktualisiert.' } else { 'fallbackcore.ps1 wurde auf dem Zielgerät erstellt.' }
-            Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'FallbackScript' -Message $copyMessage -AffectedPath (Join-Path $SupportClientDirectory $FallbackScriptFileName) -Result $copyResult.Result
-            $bootstrapResult = New-RemoteFallbackConfig -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $FallbackConfigFileName -FallbackScriptFileName $FallbackScriptFileName -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -FallbackScheduledTaskName $FallbackScheduledTaskName -FallbackRunOnceValueName $FallbackRunOnceValueName -OperationId $OperationId -FallbackTaskDelayMinutes $FallbackTaskDelayMinutes -SourceHost $SourceHost -ExpectedAppSignerThumbprint $ExpectedAppSignerThumbprint -ExpectedAppSignerPublicKey $ExpectedAppSignerPublicKey
+            Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'FallbackScript' -Message $copyMessage -AffectedPath (Join-Path $SupportClientDirectory $FallbackScriptFileName) -Result $copyResult.Result
+            $bootstrapResult = New-RemoteFallbackConfig -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $FallbackConfigFileName -FallbackScriptFileName $FallbackScriptFileName -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -FallbackScheduledTaskName $FallbackScheduledTaskName -FallbackRunOnceValueName $FallbackRunOnceValueName -OperationId $OperationId -FallbackTaskDelayMinutes $FallbackTaskDelayMinutes -SourceHost $SourceHost -ExpectedAppSignerThumbprint $ExpectedAppSignerThumbprint -ExpectedAppSignerPublicKey $ExpectedAppSignerPublicKey
             if (-not $bootstrapResult.Success) { throw "Fallback konnte nicht vorbereitet werden: $($bootstrapResult.StandardError)" }
             $fallbackConfigArg = $FallbackConfigFileName
         }
         else {
-            Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'FallbackArm' -Message 'ConnectionFallback aktiv, RestoreRemotingState deaktiviert. Es wird kein Restore-Fallback auf dem Zielgerät abgelegt.'
+            Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'FallbackArm' -Message 'ConnectionFallback aktiv, RestoreRemotingState deaktiviert. Es wird kein Restore-Fallback auf dem Zielgerät abgelegt.'
         }
-        $enableResult = Enable-TemporaryPsRemoting -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $fallbackConfigArg -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost
+        $enableResult = Enable-TemporaryPsRemoting -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $fallbackConfigArg -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost
         if (-not $enableResult.Success) { throw "PSRemoting konnte nicht aktiviert werden: $($enableResult.StandardError)" }
         $result = Invoke-Reset
     }
@@ -169,11 +170,12 @@ catch {
     Write-Error $_.Exception.Message
     exit 1
 }
+
 # SIG # Begin signature block
 # MIIl6QYJKoZIhvcNAQcCoIIl2jCCJdYCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCX9CZ2qVkiju/C
-# 6ZH3SavdDBAN6E1ld4Bfscp8G4cP96CCH/UwggWNMIIEdaADAgECAhAOmxiO+dAt
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCB8PAkjG3n/7C3m
+# EbGAazhWW8G56NqOKMvDgvN59ASLYqCCH/UwggWNMIIEdaADAgECAhAOmxiO+dAt
 # 5+/bUOIIQBhaMA0GCSqGSIb3DQEBDAUAMGUxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAiBgNV
 # BAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yMjA4MDEwMDAwMDBa
@@ -349,28 +351,28 @@ catch {
 # ZSBJQ0ECExwAABBW3jHeQ0hBewkAAQAAEFYwDQYJYIZIAWUDBAIBBQCggYQwGAYK
 # KwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIB
 # BDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAvBgkqhkiG9w0BCQQxIgQg
-# C/YdmLDJqUCbvijUaQKKLt1GmeKuIHbgnZz4QZ9pE/IwDQYJKoZIhvcNAQEBBQAE
-# ggEALFPmfMD1bs/4rEarbic9N2Vd992ZoU7J0YU/m/sBk5jDpWay96lLLYLuvZ7N
-# f/IgbqEFMocWfegKSBFMj2YbBkLDzHlpFgoCWKjdyQdeM6mL3xdD1SkmiQFFq7lV
-# xoyYezT+7+lgVVCxdhkqYyyzten3VFVCOkrViz9ELlfTlOfmJsUw28yAsOYoSJat
-# 67peBqO6U5XGNQ6mFeDVIu8CILXo2AeOHV3HX+6m90EIiVDm0EqnCjofexAd8haF
-# SQuK6WiheTlJSyhtcvH2IGGDCPPI/cqAUlbE9yYtaUt0Uyha3nKEoc2n/SmYbQhn
-# 9qT/kr+jox4B6mBtSStb3id0F6GCAyYwggMiBgkqhkiG9w0BCQYxggMTMIIDDwIB
+# W/GqQowNuNuWRAketmf204LnbBT8YZl2YjQJHQSnLEUwDQYJKoZIhvcNAQEBBQAE
+# ggEAMM4bmYMzot7vaxhWTdAXuiGoDVyqkAXc1EaABGZyKG6jJ2sYao7vG/S3a4KW
+# 9pJhNsIdNrUyJsx+BWaCm+ezIggHz4kEl2OmBCptCAuYcnaFrROCW9g8G2NM+PPv
+# x3RgcAUOL4JOeKN3lZv1TIjgnsbTONIWMVDi1rlKVb+F2SSOFWQJpyOnwVUog689
+# BVi04pk3/H6dXpIfgdg3Rxm8AtJVou9cUcQGKcF/tI5/zxaFyzvjzzMadvY/GPbp
+# m2nkcYA0wzqkqi2ndTxcXf0Xkakk32orvFhVt6Zw3Zs9/J9+0Z+ZqCoYPVTOulMk
+# wY810dwCIeNSr1ZRjelYb2jzmqGCAyYwggMiBgkqhkiG9w0BCQYxggMTMIIDDwIB
 # ATB9MGkxCzAJBgNVBAYTAlVTMRcwFQYDVQQKEw5EaWdpQ2VydCwgSW5jLjFBMD8G
 # A1UEAxM4RGlnaUNlcnQgVHJ1c3RlZCBHNCBUaW1lU3RhbXBpbmcgUlNBNDA5NiBT
 # SEEyNTYgMjAyNSBDQTECEAqA7xhLjfEFgtHEdqeVdGgwDQYJYIZIAWUDBAIBBQCg
 # aTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA0
-# MjQxMjUwMjZaMC8GCSqGSIb3DQEJBDEiBCCD5RDB/TwgPIIX1DMsUKxuQy+Q5CVv
-# zqdLFFpvaA/sgTANBgkqhkiG9w0BAQEFAASCAgDNLRvv6yeJB0/X9veQKpSuSwbJ
-# sExy4qBfg7qtKlADzikOt/AwDbId3j50cnAtDCozgvzGslN3sOPx879q9Yub9i+5
-# qGy0ayE/QCT4Bzjy8yLLwP5+YvA2VqcW6qhJVVb9rvnxscVnh82SA/D1oFksZEV5
-# fhWMwT2nPgD76myu1fvKTNH+pVyRGir4wCw8oKFpkuD+Mnq6ejGFJyrlonWnjZhO
-# gb3bIHyQU8KHHXdkhf1kh+tXSRvqLuxWJDB+x1F5x98ZL+aWxV51HN36d9nviu2z
-# DLg8lkGNZTouaJdrVlARNz6ZJoyNJE2Fk7mUNlF9HCoWJsuIPVlpo7tc7K1l1/d6
-# T1Ejixq+M+n3VeAPW09jvFO2+hrkn/rVPIKPMtM918FMi5iP6x6bD7C5ghV1+9bM
-# EThdcGuQJHlPZzdd6cXhPBbVopEkqDpNACEItNSGhZ9UTnHODHYAnzbGZhFkAeXR
-# +IoSnw+vxLcMdZ0IFCATHaFBjWie/D9MJCvJP+ZrpLRB7WZXsbJ7eAza4GyeayGr
-# gN+NxdKxcZZeVr60MyeVb/LXDXXqt0aj8ro8/2wWjNcKfg77di4XQjuaoZwSxspd
-# mMA7x0lNdB21ZdJVdiTc9C4BzRL+ialJmS0Qm5Yxz+Rv/djSglMgN7hsvtFWdVqC
-# 2HxlCTjvttalvm3teg==
+# MTcxNDEzMzJaMC8GCSqGSIb3DQEJBDEiBCAimsCN2cdKpQU7D3B2qVKa+kE8QwA4
+# RZuaUqV8WX+OeDANBgkqhkiG9w0BAQEFAASCAgCDEup3ckXyLOVjwe6AbUQp9hui
+# 34VfUqTgq2VpTUY7Vl85UC8v6eWw+EadfM3nPIJMu9NelayaEANmZPG2oXtBXKXj
+# T9mw5ZYmD8hAY6nVLvcWc6pnYZ0V7SLvI/ILtCtUMEK/SZ3PuB3QxTtpfE/q0i6B
+# VjhVWv7ZqV1kJI9+79rHOU0Ej5B/Ys9ZbU4T4TWp/QdhDoggSJfTbSd/NO+egEOx
+# DY3oMiL7rT4TD81zM/qi137/n6JwA39oIAXtqpwgnswxSVTFW+qlj7qB+q92TPVD
+# 3h5HBQ89iGKViMdxEqhTtHGCbsMALoiVbW4xMXLBBwuogH3JYNKXjdznsPpoTxqv
+# F6cBwiW+3vE+Ko9S1IeTREKa0gfLArL3iyWuShWyas1aXcHRfZtECyV5G9FI++Vo
+# 5KgyasVrCtkYX5w7kiLJYP5i8ETs5Vf7eHx/Hz34kYLhMXWJYHsY+PPCOOHJHQF/
+# NUGHbaqoJdeBxERz58cIagLsfY2h/ih2JIWdbSfKrhTqR+aIaEvA1jEUGwE2aizR
+# 8hYV/QudxHm5ssN8RbFekifuZH+N/ZbxqPKR2p3gxhG7YXjHTR19xXbhh07XIDnr
+# +QAk42ZB7exVK9lDtJyKWfVIOAWUf8TNWmWHCaBWwQOMDEB3KGySjwyUn8oMDaB7
+# yysAqxrr0khxI19RsQ==
 # SIG # End signature block

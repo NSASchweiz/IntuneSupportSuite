@@ -15,7 +15,7 @@ public sealed class AuditLogger
     {
         var directory = Environment.ExpandEnvironmentVariables(config.LocalLogDirectory);
         Directory.CreateDirectory(directory);
-        _localLogFilePath = Path.Combine(directory, "DAP-Intune-Support.log");
+        _localLogFilePath = Path.Combine(directory, LanguageManager.Instance.GetLocalAppLogFileName());
         _logFileManager = new LogFileManager(config);
     }
 

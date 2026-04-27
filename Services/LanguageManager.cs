@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using DapIntuneSupportSuite.Models;
 
 namespace DapIntuneSupportSuite.Services;
@@ -36,6 +37,31 @@ public sealed class LanguageManager
         return string.IsNullOrWhiteSpace(AppPrefix) ? BaseAppName : $"{AppPrefix} {BaseAppName}".Trim();
     }
 
+    public string GetCompactAppToken() => SanitizeForFileStem(GetAppDisplayName(), removeSpaces: true);
+
+    public string GetAppFileStem() => SanitizeForFileStem(GetAppDisplayName(), removeSpaces: false);
+
+    public string GetLocalAppLogFileName() => $"{GetAppFileStem()}.log";
+
+    public string GetRemoteAuditLogFileName() => $"{GetAppFileStem()}-Remote-Audit.log";
+
+    public string GetFallbackLogFileName() => $"{GetAppFileStem()}-Fallback.log";
+
+    public string GetLocalAppLogLabel() => GetAppDisplayName();
+
+    public string GetRemoteAuditLogLabel() => $"{GetAppDisplayName()} Remote Audit Log".Trim();
+
+    public string GetFallbackLogLabel() => $"{GetAppDisplayName()} Fallback Log".Trim();
+
+    public IReadOnlyList<string> GetKnownLocalAppLogFileNameVariants()
+        => GetDistinctList(GetLocalAppLogFileName(), "DAP-Intune-Support.log", "Intune-Support-Suite.log", "Intune-Support.log");
+
+    public IReadOnlyList<string> GetKnownRemoteAuditLogFileNameVariants()
+        => GetDistinctList(GetRemoteAuditLogFileName(), "DAP-Remote-Audit.log", "Intune-Support-Suite-Remote-Audit.log", "Remote-Audit.log");
+
+    public IReadOnlyList<string> GetKnownFallbackLogFileNameVariants()
+        => GetDistinctList(GetFallbackLogFileName(), "DAP-Fallback.log", "Intune-Support-Suite-Fallback.log", "Fallback.log");
+
     public string ComposeWindowTitle(string? suffix = null)
     {
         var title = GetAppDisplayName();
@@ -59,6 +85,7 @@ public sealed class LanguageManager
         config.AppDataFolderName = appDisplayName;
         config.LocalLogDirectory = NormalizeAppNamedPath(config.LocalLogDirectory, appDisplayName, "Logs");
         config.LocalProcessingDirectory = NormalizeAppNamedPath(config.LocalProcessingDirectory, appDisplayName, "ProcessedLogs");
+        config.RemoteFallbackLogFileName = GetFallbackLogFileName();
     }
 
     public IReadOnlyList<LanguageOption> DiscoverLanguages(string? executableDirectory = null)
@@ -210,36 +237,32 @@ public sealed class LanguageManager
         var result = value;
         result = ReplaceKnownAppNameVariants(result, GetAppDisplayName());
 
-        result = ReplaceDynamicLabel(result, "DAP Remote Audit Log", "Remote Audit Log");
-        result = ReplaceDynamicLabel(result, "DAP Fallback Log", "Fallback Log");
-        result = ReplaceDynamicLabel(result, "DAP Intune Support", "Intune Support");
-
-        result = ReplaceDynamicLabel(result, "DAP Remote Audit Log", "Remote audit log");
-        result = ReplaceDynamicLabel(result, "DAP Fallback Log", "Fallback log");
-        result = ReplaceDynamicLabel(result, "DAP Intune Support", "Intune Support");
+        result = ReplaceKnownLabelVariants(result, GetRemoteAuditLogLabel(),
+            "DAP Remote Audit Log",
+            "Remote Audit Log",
+            "Remote audit log",
+            "Intune Support Suite Remote Audit Log");
+        result = ReplaceKnownLabelVariants(result, GetFallbackLogLabel(),
+            "DAP Fallback Log",
+            "Fallback Log",
+            "Fallback log",
+            "Intune Support Suite Fallback Log");
+        result = ReplaceKnownLabelVariants(result, GetLocalAppLogLabel(),
+            "DAP Intune Support",
+            "Intune Support",
+            "Intune Support Suite");
         return result;
     }
 
-    private string ReplaceDynamicLabel(string source, string canonicalSource, string localizedBaseLabel)
+    private static string ReplaceKnownLabelVariants(string source, string replacement, params string[] variants)
     {
-        var result = source.Replace(canonicalSource, BuildPrefixedLabel(localizedBaseLabel), StringComparison.Ordinal);
-        var withoutPrefix = localizedBaseLabel;
-        var withPrefix = BuildPrefixedLabel(localizedBaseLabel);
-
-        if (!string.IsNullOrWhiteSpace(AppPrefix)
-            && !string.Equals(withPrefix, withoutPrefix, StringComparison.Ordinal)
-            && result.Contains(withoutPrefix, StringComparison.Ordinal)
-            && !result.Contains(withPrefix, StringComparison.Ordinal))
+        var result = source;
+        foreach (var variant in variants.Where(variant => !string.IsNullOrWhiteSpace(variant)).Distinct(StringComparer.Ordinal).OrderByDescending(variant => variant.Length))
         {
-            result = result.Replace(withoutPrefix, withPrefix, StringComparison.Ordinal);
+            result = result.Replace(variant, replacement, StringComparison.Ordinal);
         }
 
         return result;
-    }
-
-    private string BuildPrefixedLabel(string label)
-    {
-        return string.IsNullOrWhiteSpace(AppPrefix) ? label : $"{AppPrefix} {label}";
     }
 
     private string NormalizeAppNamedPath(string? currentValue, string appDisplayName, string leafFolderName)
@@ -324,5 +347,28 @@ public sealed class LanguageManager
             .Where(variant => !string.IsNullOrWhiteSpace(variant))
             .Distinct(StringComparer.Ordinal)
             .Any(variant => source.Contains(variant, StringComparison.Ordinal));
+    }
+
+    private static IReadOnlyList<string> GetDistinctList(params string[] values)
+    {
+        return values
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static string SanitizeForFileStem(string? value, bool removeSpaces)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "Intune-Support-Suite";
+        }
+
+        var invalid = Path.GetInvalidFileNameChars();
+        var characters = value.Trim().Select(character => invalid.Contains(character) ? '-' : character).ToArray();
+        var sanitized = new string(characters);
+        sanitized = Regex.Replace(sanitized, @"\s+", removeSpaces ? string.Empty : "-");
+        sanitized = Regex.Replace(sanitized, "-+", "-").Trim('-');
+        return string.IsNullOrWhiteSpace(sanitized) ? "Intune-Support-Suite" : sanitized;
     }
 }

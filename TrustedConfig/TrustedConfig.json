@@ -1,18 +1,18 @@
 {
-  "ConfigVersion": "1.1.0-hotfix9",
+  "ConfigVersion": "1.1.1-Test-hotfix8",
   "TrustedConfigPath": "ProgramDir\\TrustedConfig\\TrustedConfig.json",
   "TrustLogPath": "ProgramDir\\AppLog\\Trust.log",
-  "RemoteAuditLogDirectory": "C:\\ProgramData\\ktzh\\logs\\DAP Intune Support Suite",
+  "RemoteAuditLogDirectory": "C:\\ProgramData\\ktzh\\logs\\Intune Support Suite",
   "RemoteImeLogDirectory": "C:\\ProgramData\\Microsoft\\IntuneManagementExtension\\Logs",
-  "RemoteTempDirectory": "C:\\ProgramData\\DAPIntuneSupportSuite\\Temp",
-  "SupportClientDirectory": "C:\\ProgramData\\DAP Intune Support Client",
+  "RemoteTempDirectory": "C:\\ProgramData\\IntuneSupportSuite\\Temp",
+  "SupportClientDirectory": "C:\\ProgramData\\Intune Support Client",
   "PowerShellExecutable": "powershell.exe",
   "PsExecPath": "",
   "FallbackConfigFileName": "fallbackconfig.json",
   "FallbackScriptFileName": "fallbackcore.ps1",
-  "FallbackScheduledTaskName": "DAPIntuneSupportFallback",
-  "FallbackRunOnceValueName": "DAPIntuneSupportFallback",
-  "RemoteFallbackLogFileName": "DAP-Fallback.log",
+  "FallbackScheduledTaskName": "IntuneSupportSuiteFallback",
+  "FallbackRunOnceValueName": "IntuneSupportSuiteFallback",
+  "RemoteFallbackLogFileName": "Intune-Support-Suite-Fallback.log",
   "ConnectionFallback": false,
   "RestoreRemotingState": false,
   "RegistryPathsForAppReset": [
@@ -21,9 +21,9 @@
   ],
   "ImeServiceName": "IntuneManagementExtension",
   "AllowedSources": [
-                     "sv000051",
-                     "CPC-pasca-C394O"
-                    ],
+    "sv000051",
+    "CPC-pasca-C394O"
+  ],
   "AllowedDestinations": [],
   "ToolsDirectoryPath": "ProgramDir\\Tools",
   "PsExecCatalogFilePath": "ProgramDir\\Tools\\PSTools.cat",

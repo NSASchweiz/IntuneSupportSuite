@@ -1,5 +1,5 @@
 {
-  "ConfigVersion": "1.1.1-Test-hotfix6",
+  "ConfigVersion": "1.1.1-Test-hotfix8",
   "WindowTitle": "Intune Support Suite",
   "AppDataFolderName": "Intune Support Suite",
   "LocalLogDirectory": "%APPDATA%\\Intune Support Suite\\Logs",

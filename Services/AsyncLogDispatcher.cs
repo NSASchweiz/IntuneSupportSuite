@@ -14,7 +14,7 @@ public static class AsyncLogDispatcher
         Worker = new Thread(ProcessQueue)
         {
             IsBackground = true,
-            Name = "DAP-AsyncLogDispatcher"
+            Name = "IntuneSupportSuite-AsyncLogDispatcher"
         };
         Worker.Start();
     }

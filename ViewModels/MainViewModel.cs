@@ -1671,7 +1671,7 @@ private bool UpdateLocalLogCollection(LogBundle bundle, string collectionName, s
         writer.Write(content);
     }
 
-    private static string GetExportFileName(string collectionName)
+    private string GetExportFileName(string collectionName)
         => collectionName switch
         {
             nameof(AgentExecutorEntries) => "AgentExecutor.log",
@@ -1692,10 +1692,10 @@ private bool UpdateLocalLogCollection(LogBundle bundle, string collectionName, s
             nameof(SensorEntries) => "Sensor.log",
             nameof(Win321AppInventoryEntries) => "Win32AppInventory.log",
             nameof(Win32AppsRegistryEntries) => "Win32AppsRegistry.log",
-            nameof(LocalAppLogEntries) => "DAP_Intune_Support.log",
+            nameof(LocalAppLogEntries) => LanguageManager.Instance.GetLocalAppLogFileName(),
             nameof(AppDataLogsEntries) => "AppData_LogHistory.log",
-            nameof(RemoteAuditEntries) => "DAP_Remote_Audit.log",
-            nameof(FallbackEntries) => "DAP_Fallback.log",
+            nameof(RemoteAuditEntries) => LanguageManager.Instance.GetRemoteAuditLogFileName(),
+            nameof(FallbackEntries) => _config.RemoteFallbackLogFileName,
             nameof(TrustLogEntries) => "Trust.log",
             _ => SanitizeFileName(collectionName) + ".log"
         };
@@ -3549,7 +3549,7 @@ private bool UpdateLocalLogCollection(LogBundle bundle, string collectionName, s
             {
                 appDataDirectory = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    string.IsNullOrWhiteSpace(_config.AppDataFolderName) ? "DAP Intune Support Suite" : _config.AppDataFolderName.Trim());
+                    string.IsNullOrWhiteSpace(_config.AppDataFolderName) ? LanguageManager.Instance.GetAppDisplayName() : _config.AppDataFolderName.Trim());
             }
 
             Directory.CreateDirectory(appDataDirectory!);
@@ -3557,7 +3557,7 @@ private bool UpdateLocalLogCollection(LogBundle bundle, string collectionName, s
         }
         catch
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DAP Intune Support Suite", "AppNameCache.json");
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), LanguageManager.Instance.GetAppDisplayName(), "AppNameCache.json");
         }
     }
 

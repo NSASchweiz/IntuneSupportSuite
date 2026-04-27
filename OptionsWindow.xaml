@@ -109,7 +109,7 @@
                         <TextBlock Text="Sichtbare Log-Reiter" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" />
                         <TextBlock Text="Lokale Logs" Style="{StaticResource SubSectionHeaderStyle}" />
                         <UniformGrid Columns="3" Margin="0,0,0,12">
-                            <CheckBox Content="DAP Intune Support" IsChecked="{Binding LocalAppLogVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="Intune Support Suite" IsChecked="{Binding LocalAppLogVisible}" Margin="0,0,0,8" />
                             <CheckBox Content="Trust Log" IsChecked="{Binding TrustLogVisible}" Margin="0,0,0,8" />
                             <CheckBox Content="Log Verlauf" IsChecked="{Binding AppDataLogsVisible}" Margin="0,0,0,8" />
                         </UniformGrid>
@@ -125,8 +125,8 @@
 
                         <TextBlock Text="Intune Logs" Style="{StaticResource SubSectionHeaderStyle}" />
                         <UniformGrid Columns="3" Margin="0,0,0,12">
-                            <CheckBox Content="DAP Remote Audit Log" IsChecked="{Binding RemoteAuditLogVisible}" Margin="0,0,0,8" />
-                            <CheckBox Content="DAP Fallback Log" IsChecked="{Binding FallbackLogVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="Intune Support Suite Remote Audit Log" IsChecked="{Binding RemoteAuditLogVisible}" Margin="0,0,0,8" />
+                            <CheckBox Content="Intune Support Suite Fallback Log" IsChecked="{Binding FallbackLogVisible}" Margin="0,0,0,8" />
                             <CheckBox Content="AgentExecutor.log" IsChecked="{Binding AgentExecutorVisible}" Margin="0,0,0,8" />
                             <CheckBox Content="AppActionProcessor.log" IsChecked="{Binding AppActionProcessorVisible}" Margin="0,0,0,8" />
                             <CheckBox Content="AppWorkload.log" IsChecked="{Binding AppWorkloadVisible}" Margin="0,0,0,8" />

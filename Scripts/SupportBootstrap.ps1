@@ -68,6 +68,7 @@ function Write-RemoteBootstrapLog {
         [Parameter(Mandatory = $true)][string]$PsExecPath,
         [Parameter(Mandatory = $true)][string]$PowerShellExecutable,
         [Parameter(Mandatory = $true)][string]$RemoteAuditLogDirectory,
+        [Parameter(Mandatory = $true)][string]$RemoteAuditLogFileName,
         [Parameter(Mandatory = $true)][string]$RemoteFallbackLogFileName,
         [Parameter(Mandatory = $true)][string]$OperationId,
         [Parameter(Mandatory = $true)][string]$Level,
@@ -81,6 +82,7 @@ function Write-RemoteBootstrapLog {
     $remoteScript = @"
 `$ErrorActionPreference = 'Stop'
 `$auditDir = '$($RemoteAuditLogDirectory.Replace("'","''"))'
+`$remoteAuditLog = '$($RemoteAuditLogFileName.Replace("'","''"))'
 `$fallbackLog = '$($RemoteFallbackLogFileName.Replace("'","''"))'
 `$operationId = '$($OperationId.Replace("'","''"))'
 `$level = '$($Level.Replace("'","''"))'
@@ -91,7 +93,7 @@ function Write-RemoteBootstrapLog {
 `$result = '$($Result.Replace("'","''"))'
 
 New-Item -Path `$auditDir -ItemType Directory -Force | Out-Null
-foreach (`$fileName in @('DAP-Remote-Audit.log', `$fallbackLog)) {
+foreach (`$fileName in @(`$remoteAuditLog, `$fallbackLog)) {
     `$logFile = Join-Path `$auditDir `$fileName
     `$line = "{0}`t{1}`tSource=Bootstrap`tAction={2}`tOperationId={3}`tUser={4}`tSourceHost={5}`tDestinationHost={6}`tResult={7}`tPath={8}`tDetails={9}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), `$level, `$action, `$operationId, `$env:USERNAME, `$sourceHost, `$env:COMPUTERNAME, `$result, `$affectedPath, `$message
     Add-Content -Path `$logFile -Value `$line -Encoding UTF8
@@ -110,6 +112,7 @@ function New-RemoteFallbackConfig {
         [Parameter(Mandatory = $true)][string]$FallbackConfigFileName,
         [Parameter(Mandatory = $true)][string]$FallbackScriptFileName,
         [Parameter(Mandatory = $true)][string]$RemoteAuditLogDirectory,
+        [Parameter(Mandatory = $true)][string]$RemoteAuditLogFileName,
         [Parameter(Mandatory = $true)][string]$RemoteFallbackLogFileName,
         [Parameter(Mandatory = $true)][string]$FallbackScheduledTaskName,
         [Parameter(Mandatory = $true)][string]$FallbackRunOnceValueName,
@@ -126,6 +129,7 @@ function New-RemoteFallbackConfig {
 `$configFileName = '$($FallbackConfigFileName.Replace("'","''"))'
 `$scriptFileName = '$($FallbackScriptFileName.Replace("'","''"))'
 `$auditDir = '$($RemoteAuditLogDirectory.Replace("'","''"))'
+`$remoteAuditLogFileName = '$($RemoteAuditLogFileName.Replace("'","''"))'
 `$fallbackLogFileName = '$($RemoteFallbackLogFileName.Replace("'","''"))'
 `$taskName = '$($FallbackScheduledTaskName.Replace("'","''"))'
 `$runOnceBaseName = '$($FallbackRunOnceValueName.Replace("'","''"))'
@@ -145,7 +149,7 @@ function Write-TargetLine {
 }
 function Write-BothLogs {
     param([string]`$Level,[string]`$Action,[string]`$Result,[string]`$Details,[string]`$Path='')
-    Write-TargetLine -Level `$Level -Action `$Action -Result `$Result -Details `$Details -FileName 'DAP-Remote-Audit.log' -Path `$Path
+    Write-TargetLine -Level `$Level -Action `$Action -Result `$Result -Details `$Details -FileName `$remoteAuditLogFileName -Path `$Path
     Write-TargetLine -Level `$Level -Action `$Action -Result `$Result -Details `$Details -FileName `$fallbackLogFileName -Path `$Path
 }
 function Remove-FallbackTriggers {
@@ -270,7 +274,7 @@ function Register-FallbackTask {
 }
 function Ensure-StateShape {
     param([Parameter(Mandatory=`$true)]`$State,[Parameter(Mandatory=`$true)]`$WinRmService,[int]`$ListenerCount,[string[]]`$EnabledFirewallRules)
-    foreach (`$name in @('OperationId','CreatedAt','JumpHost','SupportUser','SupportClientDirectory','RemoteAuditLogDirectory','RemoteFallbackLogFileName','FallbackScriptPath','FallbackConfigPath','FallbackScheduledTaskName','FallbackRunOnceValueName','RestoreCompleted','Armed','LastRestoreResult','RestoredAt','ScheduledTaskCreated','RunOnceCreated','ScheduledTaskRetryAttempted')) {
+    foreach (`$name in @('OperationId','CreatedAt','JumpHost','SupportUser','SupportClientDirectory','RemoteAuditLogDirectory','RemoteAuditLogFileName','RemoteFallbackLogFileName','FallbackScriptPath','FallbackConfigPath','FallbackScheduledTaskName','FallbackRunOnceValueName','RestoreCompleted','Armed','LastRestoreResult','RestoredAt','ScheduledTaskCreated','RunOnceCreated','ScheduledTaskRetryAttempted')) {
         if (-not (`$State.PSObject.Properties.Name -contains `$name)) {
             `$default = switch (`$name) {
                 'OperationId' { `$operationId }
@@ -279,6 +283,7 @@ function Ensure-StateShape {
                 'SupportUser' { `$env:USERNAME }
                 'SupportClientDirectory' { `$supportDir }
                 'RemoteAuditLogDirectory' { `$auditDir }
+                'RemoteAuditLogFileName' { `$remoteAuditLogFileName }
                 'RemoteFallbackLogFileName' { `$fallbackLogFileName }
                 'FallbackScriptPath' { Join-Path `$supportDir `$scriptFileName }
                 'FallbackConfigPath' { Join-Path `$supportDir `$configFileName }
@@ -325,6 +330,7 @@ else {
         SupportUser = `$env:USERNAME
         SupportClientDirectory = `$supportDir
         RemoteAuditLogDirectory = `$auditDir
+        RemoteAuditLogFileName = `$remoteAuditLogFileName
         RemoteFallbackLogFileName = `$fallbackLogFileName
         FallbackScriptPath = `$scriptPath
         FallbackConfigPath = `$configPath
@@ -397,6 +403,7 @@ function Retry-RemoteFallbackScheduledTask {
         [Parameter(Mandatory = $true)][string]$SupportClientDirectory,
         [Parameter(Mandatory = $true)][string]$FallbackConfigFileName,
         [Parameter(Mandatory = $true)][string]$RemoteAuditLogDirectory,
+        [Parameter(Mandatory = $true)][string]$RemoteAuditLogFileName,
         [Parameter(Mandatory = $true)][string]$RemoteFallbackLogFileName,
         [Parameter(Mandatory = $true)][string]$FallbackScheduledTaskName,
         [Parameter(Mandatory = $true)][string]$OperationId,
@@ -412,6 +419,7 @@ function Retry-RemoteFallbackScheduledTask {
 `$configFileName = '$($FallbackConfigFileName.Replace("'","''"))'
 `$configPath = if ([string]::IsNullOrWhiteSpace(`$supportDir) -or [string]::IsNullOrWhiteSpace(`$configFileName)) { '' } else { Join-Path `$supportDir `$configFileName }
 `$auditDir = '$($RemoteAuditLogDirectory.Replace("'","''"))'
+`$remoteAuditLog = '$($RemoteAuditLogFileName.Replace("'","''"))'
 `$fallbackLog = '$($RemoteFallbackLogFileName.Replace("'","''"))'
 `$taskName = '$($FallbackScheduledTaskName.Replace("'","''"))'
 `$operationId = '$($OperationId.Replace("'","''"))'
@@ -428,7 +436,7 @@ function Write-TargetLine {
 }
 function Write-BothLogs {
     param([string]`$Level,[string]`$Action,[string]`$Result,[string]`$Details,[string]`$Path='')
-    Write-TargetLine -Level `$Level -Action `$Action -Result `$Result -Details `$Details -FileName 'DAP-Remote-Audit.log' -Path `$Path
+    Write-TargetLine -Level `$Level -Action `$Action -Result `$Result -Details `$Details -FileName `$remoteAuditLogFileName -Path `$Path
     Write-TargetLine -Level `$Level -Action `$Action -Result `$Result -Details `$Details -FileName `$fallbackLog -Path `$Path
 }
 function Register-FallbackTask {
@@ -529,6 +537,7 @@ function Enable-TemporaryPsRemoting {
         [Parameter(Mandatory = $false)][string]$SupportClientDirectory,
         [Parameter(Mandatory = $false)][string]$FallbackConfigFileName,
         [Parameter(Mandatory = $true)][string]$RemoteAuditLogDirectory,
+        [Parameter(Mandatory = $true)][string]$RemoteAuditLogFileName,
         [Parameter(Mandatory = $true)][string]$RemoteFallbackLogFileName,
         [Parameter(Mandatory = $true)][string]$OperationId,
         [Parameter(Mandatory = $false)][string]$SourceHost = ''
@@ -540,6 +549,7 @@ function Enable-TemporaryPsRemoting {
 `$configFileName = '$($FallbackConfigFileName.Replace("'","''"))'
 `$configPath = if ([string]::IsNullOrWhiteSpace(`$supportDir) -or [string]::IsNullOrWhiteSpace(`$configFileName)) { '' } else { Join-Path `$supportDir `$configFileName }
 `$auditDir = '$($RemoteAuditLogDirectory.Replace("'","''"))'
+`$remoteAuditLog = '$($RemoteAuditLogFileName.Replace("'","''"))'
 `$fallbackLog = '$($RemoteFallbackLogFileName.Replace("'","''"))'
 `$operationId = '$($OperationId.Replace("'","''"))'
 `$sourceHost = '$($SourceHost.Replace("'","''"))'
@@ -564,11 +574,11 @@ try {
         `$config.Armed = `$true
         `$config | ConvertTo-Json -Depth 8 | Set-Content -Path `$configPath -Encoding UTF8
     }
-    Write-TargetLine -Level 'INFO' -Action 'EnablePsRemoting' -Result 'Enabled' -Details ('PSRemoting aktiviert. Vorheriger Status=' + `$beforeStatus + '; Listener=' + `$beforeListenerCount) -FileName 'DAP-Remote-Audit.log' -Path `$configPath
+    Write-TargetLine -Level 'INFO' -Action 'EnablePsRemoting' -Result 'Enabled' -Details ('PSRemoting aktiviert. Vorheriger Status=' + `$beforeStatus + '; Listener=' + `$beforeListenerCount) -FileName `$remoteAuditLog -Path `$configPath
     Write-TargetLine -Level 'INFO' -Action 'EnablePsRemoting' -Result 'Enabled' -Details ('PSRemoting aktiviert. Vorheriger Status=' + `$beforeStatus + '; Listener=' + `$beforeListenerCount) -FileName `$fallbackLog -Path `$configPath
 }
 catch {
-    Write-TargetLine -Level 'ERROR' -Action 'EnablePsRemoting' -Result 'Failed' -Details ('PSRemoting konnte nicht aktiviert werden: ' + `$_.Exception.Message) -FileName 'DAP-Remote-Audit.log' -Path `$configPath
+    Write-TargetLine -Level 'ERROR' -Action 'EnablePsRemoting' -Result 'Failed' -Details ('PSRemoting konnte nicht aktiviert werden: ' + `$_.Exception.Message) -FileName `$remoteAuditLog -Path `$configPath
     Write-TargetLine -Level 'ERROR' -Action 'EnablePsRemoting' -Result 'Failed' -Details ('PSRemoting konnte nicht aktiviert werden: ' + `$_.Exception.Message) -FileName `$fallbackLog -Path `$configPath
     throw
 }

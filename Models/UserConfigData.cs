@@ -4,7 +4,7 @@ namespace DapIntuneSupportSuite.Models;
 
 public sealed class UserConfigData
 {
-    public string ConfigVersion { get; set; } = "1.1.1-Test-hotfix6";
+    public string ConfigVersion { get; set; } = "1.1.1-Test-hotfix8";
     public string WindowTitle { get; set; } = "Intune Support Suite";
     public string AppDataFolderName { get; set; } = "Intune Support Suite";
     public string LocalLogDirectory { get; set; } = @"%APPDATA%\Intune Support Suite\Logs";

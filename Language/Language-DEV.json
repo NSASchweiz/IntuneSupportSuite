@@ -3,7 +3,7 @@
     "LanguageId": "Language-DEV",
     "DisplayName": "Language DEV",
     "ShowInGui": true,
-    "AppPrefix": "DAP",
+    "AppPrefix": "",
     "AppName": "Intune Support Suite"
   },
   "Strings": {
@@ -239,6 +239,6 @@
     "reset Signing state": "reset Signing state",
     "shortDestinationLogs": "shortDestinationLogs",
     "simulationMode": "simulationMode",
-    "winget wurde nicht gefunden. PsExec wurde im Programmverzeichnis von DAP Intune Support Suite bereitgestellt und wird von dort verwendet.": "winget wurde nicht gefunden. PsExec wurde im Programmverzeichnis von DAP Intune Support Suite bereitgestellt und wird von dort verwendet."
+    "winget wurde nicht gefunden. PsExec wurde im Programmverzeichnis von {AppDisplayName} bereitgestellt und wird von dort verwendet.": "winget wurde nicht gefunden. PsExec wurde im Programmverzeichnis von {AppDisplayName} bereitgestellt und wird von dort verwendet."
   }
 }

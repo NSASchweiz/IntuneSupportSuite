@@ -7,7 +7,7 @@ public sealed class LanguageMetadata
     public string LanguageId { get; set; } = "Language-DEV";
     public string DisplayName { get; set; } = "Language DEV";
     public bool ShowInGui { get; set; } = true;
-    public string AppPrefix { get; set; } = "DAP";
+    public string AppPrefix { get; set; } = string.Empty;
     public string AppName { get; set; } = "Intune Support Suite";
 }
 

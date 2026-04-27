@@ -1,6 +1,7 @@
 param(
     [Parameter(Mandatory = $true)] [string]$ComputerName,
     [Parameter(Mandatory = $true)] [string]$RemoteAuditLogDirectory,
+    [Parameter(Mandatory = $true)] [string]$RemoteAuditLogFileName,
     [Parameter(Mandatory = $true)] [string]$ServiceName,
     [Parameter(Mandatory = $false)] [string]$SimulationMode = 'False',
     [Parameter(Mandatory = $true)] [string]$PsExecPath,
@@ -23,10 +24,10 @@ param(
 if ($SimulationMode -eq 'True') { Write-Output 'SIMULATION'; exit 0 }
 if ([string]::IsNullOrWhiteSpace($OperationId)) { $OperationId = [guid]::NewGuid().ToString() }
 function Invoke-Reset {
-    Invoke-Command -ComputerName $ComputerName -ArgumentList $RemoteAuditLogDirectory,$ServiceName,$OperationId -ScriptBlock {
-        param($RemoteAuditLogDirectory,$ServiceName,$OperationId)
+    Invoke-Command -ComputerName $ComputerName -ArgumentList $RemoteAuditLogDirectory,$RemoteAuditLogFileName,$ServiceName,$OperationId -ScriptBlock {
+        param($RemoteAuditLogDirectory,$RemoteAuditLogFileName,$ServiceName,$OperationId)
         $null = New-Item -Path $RemoteAuditLogDirectory -ItemType Directory -Force
-        $auditFile = Join-Path $RemoteAuditLogDirectory 'DAP-Remote-Audit.log'
+        $auditFile = Join-Path $RemoteAuditLogDirectory $RemoteAuditLogFileName
         Add-Content -Path $auditFile -Value ("{0}`tINFO`tSource=RemoteAction`tOperationId={1}`tTarget={2}`tAction=ImeRestart`tMessage=IME Neustart gestartet." -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'),$OperationId,$env:COMPUTERNAME) -Encoding UTF8
         Restart-Service -Name $ServiceName -Force -ErrorAction Stop
         Add-Content -Path $auditFile -Value ("{0}`tINFO`tSource=RemoteAction`tOperationId={1}`tTarget={2}`tAction=ImeRestart`tMessage=IME Dienst wurde erfolgreich neu gestartet." -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'),$OperationId,$env:COMPUTERNAME) -Encoding UTF8
@@ -43,15 +44,15 @@ try {
         if ($RestoreRemotingState -eq 'True') {
             $copyResult = Copy-RemoteSupportFile -ComputerName $ComputerName -RemoteDirectory $SupportClientDirectory -SourcePath (Join-Path $PSScriptRoot 'fallbackcore.ps1') -TargetFileName $FallbackScriptFileName
             $copyMessage = if ($copyResult.ExistedBefore) { 'fallbackcore.ps1 wurde auf dem Zielgerät aktualisiert.' } else { 'fallbackcore.ps1 wurde auf dem Zielgerät erstellt.' }
-            Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'FallbackScript' -Message $copyMessage -AffectedPath (Join-Path $SupportClientDirectory $FallbackScriptFileName) -Result $copyResult.Result
-            $bootstrapResult = New-RemoteFallbackConfig -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $FallbackConfigFileName -FallbackScriptFileName $FallbackScriptFileName -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -FallbackScheduledTaskName $FallbackScheduledTaskName -FallbackRunOnceValueName $FallbackRunOnceValueName -OperationId $OperationId -FallbackTaskDelayMinutes $FallbackTaskDelayMinutes -SourceHost $SourceHost -ExpectedAppSignerThumbprint $ExpectedAppSignerThumbprint -ExpectedAppSignerPublicKey $ExpectedAppSignerPublicKey
+            Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'FallbackScript' -Message $copyMessage -AffectedPath (Join-Path $SupportClientDirectory $FallbackScriptFileName) -Result $copyResult.Result
+            $bootstrapResult = New-RemoteFallbackConfig -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $FallbackConfigFileName -FallbackScriptFileName $FallbackScriptFileName -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -FallbackScheduledTaskName $FallbackScheduledTaskName -FallbackRunOnceValueName $FallbackRunOnceValueName -OperationId $OperationId -FallbackTaskDelayMinutes $FallbackTaskDelayMinutes -SourceHost $SourceHost -ExpectedAppSignerThumbprint $ExpectedAppSignerThumbprint -ExpectedAppSignerPublicKey $ExpectedAppSignerPublicKey
             if (-not $bootstrapResult.Success) { throw "Fallback konnte nicht vorbereitet werden: $($bootstrapResult.StandardError)" }
             $fallbackConfigArg = $FallbackConfigFileName
         }
         else {
-            Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'FallbackArm' -Message 'ConnectionFallback aktiv, RestoreRemotingState deaktiviert. Es wird kein Restore-Fallback auf dem Zielgerät abgelegt.'
+            Write-RemoteBootstrapLog -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost -Level 'INFO' -Action 'FallbackArm' -Message 'ConnectionFallback aktiv, RestoreRemotingState deaktiviert. Es wird kein Restore-Fallback auf dem Zielgerät abgelegt.'
         }
-        $enableResult = Enable-TemporaryPsRemoting -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $fallbackConfigArg -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost
+        $enableResult = Enable-TemporaryPsRemoting -ComputerName $ComputerName -PsExecPath $PsExecPath -PowerShellExecutable $PowerShellExecutable -SupportClientDirectory $SupportClientDirectory -FallbackConfigFileName $fallbackConfigArg -RemoteAuditLogDirectory $RemoteAuditLogDirectory -RemoteAuditLogFileName $RemoteAuditLogFileName -RemoteFallbackLogFileName $RemoteFallbackLogFileName -OperationId $OperationId -SourceHost $SourceHost
         if (-not $enableResult.Success) { throw "PSRemoting konnte nicht aktiviert werden: $($enableResult.StandardError)" }
         $result = Invoke-Reset
     }
